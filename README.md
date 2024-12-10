@@ -2,7 +2,7 @@
 - git clone
 - Create an .env.local (cp .env .env.local)
   - ```DATABASE_URL="postgresql://minimaxi:password@postgres:5432/minimaxi?serverVersion=17&charset=utf8"```
-- ```docker-compose up -d```
+- ```make up```
 - ```make composer-install```
   - go on http://localhost:8080/ if you want to use adminer
     - server : postgres

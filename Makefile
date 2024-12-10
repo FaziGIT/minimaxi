@@ -1,6 +1,6 @@
 # Variables pour les noms des conteneurs
-PHP_CONTAINER=minimaxi-php-1
-NODE_CONTAINER=minimaxi-node-1
+PHP_CONTAINER=minimaxi-php
+NODE_CONTAINER=minimaxi-node
 
 # Commande par défaut
 .PHONY: help

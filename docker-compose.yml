@@ -1,6 +1,7 @@
 services:
 
   php:
+    container_name: minimaxi-php
     build:
       context: ./.docker/php
     volumes:
@@ -21,6 +22,7 @@ services:
     restart: always
 
   node:
+    container_name: minimaxi-node
     image: node:23-alpine
     volumes:
       - ./:/var/www/minimaxi:cached
