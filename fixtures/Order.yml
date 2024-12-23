@@ -1,0 +1,21 @@
+App\Entity\Order:
+  order (template):
+    client: '@client_*'
+    totalPrice: '<numberBetween(10, 100)>'
+    createdAt: '<dateTimeBetween("-1 year", "now")>'
+    updatedAt: '<dateTimeBetween("-1 year", "now")>'
+  
+  order_pending{1..10} (extends order):
+    state: !php/const \App\Enum\OrderStatusEnum::PENDING
+
+  order_paid_{1..10} (extends order):
+    state: !php/const \App\Enum\OrderStatusEnum::PAID
+    
+  order_shipped_{1..10} (extends order):
+    state: !php/const \App\Enum\OrderStatusEnum::SHIPPED
+
+  order_delivered_{1..10} (extends order):
+    state: !php/const \App\Enum\OrderStatusEnum::DELIVERED
+
+  order_cancelled_{1..10} (extends order):
+    state: !php/const \App\Enum\OrderStatusEnum::CANCELLED
