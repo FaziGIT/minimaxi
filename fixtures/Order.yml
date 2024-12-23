@@ -4,8 +4,9 @@ App\Entity\Order:
     totalPrice: '<numberBetween(10, 100)>'
     createdAt: '<dateTimeBetween("-1 year", "now")>'
     updatedAt: '<dateTimeBetween("-1 year", "now")>'
+    appliedDiscount: '@discount_code_*'
   
-  order_pending{1..10} (extends order):
+  order_pending_{1..10} (extends order):
     state: !php/const \App\Enum\OrderStatusEnum::PENDING
 
   order_paid_{1..10} (extends order):

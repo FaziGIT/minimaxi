@@ -32,6 +32,9 @@ class Order
     #[ORM\JoinColumn(nullable: false)]
     private ?Client $client = null;
 
+    #[ORM\ManyToOne(inversedBy: 'orders')]
+    private ?DiscountCode $appliedDiscount = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -93,6 +96,18 @@ class Order
     public function setClient(?Client $client): static
     {
         $this->client = $client;
+
+        return $this;
+    }
+
+    public function getAppliedDiscount(): ?DiscountCode
+    {
+        return $this->appliedDiscount;
+    }
+
+    public function setAppliedDiscount(?DiscountCode $appliedDiscount): static
+    {
+        $this->appliedDiscount = $appliedDiscount;
 
         return $this;
     }
