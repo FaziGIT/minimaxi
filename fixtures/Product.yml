@@ -1,0 +1,19 @@
+App\Entity\Product:
+  product (template):
+    name: '<word()>'
+    description: '<sentence()>'
+    price: '<numberBetween(10, 100)>'
+    stockQuantity: '<numberBetween(0, 100)>'
+    createdAt: '<dateTimeBetween("-1 year", "now")>'
+    category: '@category_*'
+    imageProducts: ['@imageProduct_*']
+    orderItems: ['@orderItem_*']
+
+  product_mini_{1..100} (extends product):
+    size: !php/const \App\Enum\SizeProductEnum::MINI
+
+  product_maxi_{1..100} (extends product):
+    size: !php/const \App\Enum\SizeProductEnum::MAXI
+
+
+

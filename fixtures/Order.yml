@@ -5,6 +5,7 @@ App\Entity\Order:
     createdAt: '<dateTimeBetween("-1 year", "now")>'
     updatedAt: '<dateTimeBetween("-1 year", "now")>'
     appliedDiscount: '@discount_code_*'
+    orderItems: ['@orderItem_*']
   
   order_pending_{1..10} (extends order):
     state: !php/const \App\Enum\OrderStatusEnum::PENDING
