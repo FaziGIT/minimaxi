@@ -38,6 +38,9 @@ class Review
     #[ORM\OneToMany(targetEntity: Like::class, mappedBy: 'review', orphanRemoval: true)]
     private Collection $likes;
 
+    #[ORM\Column]
+    private ?\DateTimeImmutable $updatedAt = null;
+
     public function __construct()
     {
         $this->likes = new ArrayCollection();
@@ -134,6 +137,18 @@ class Review
                 $like->setReview(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(\DateTimeImmutable $updatedAt): static
+    {
+        $this->updatedAt = $updatedAt;
 
         return $this;
     }
