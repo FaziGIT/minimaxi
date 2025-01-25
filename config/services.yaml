@@ -6,6 +6,8 @@
 parameters:
   imagesAvatarDestination: '%kernel.project_dir%/public/img/avatar/'
 services:
+  App\EventListener\BannedListener:
+    tags: [ kernel.event_listener ]
   # default configuration for services in *this* file
   _defaults:
     autowire: true      # Automatically injects dependencies in your services.
