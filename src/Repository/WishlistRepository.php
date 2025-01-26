@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Client;
 use App\Entity\Wishlist;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -14,6 +15,19 @@ class WishlistRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Wishlist::class);
+    }
+
+
+    public function findProductsByClient(Client $client, int $limit): array
+    {
+        return $this->createQueryBuilder('w')
+            ->innerJoin('w.product', 'p')
+            ->addSelect('p')
+            ->where('w.client = :client')
+            ->setParameter('client', $client)
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
     }
 
     //    /**

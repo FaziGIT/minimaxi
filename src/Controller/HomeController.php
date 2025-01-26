@@ -2,7 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\Client;
 use App\Repository\ProductRepository;
+use App\Repository\WishlistRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -29,5 +31,20 @@ class HomeController extends AbstractController
             'products' => $products,
         ]);
     }
+
+    #[Route('/wishlist', name: 'whishlist')]
+    public function wishlist(WishlistRepository $wishlistRepository): Response
+    {
+        $user = $this->getUser();
+        if (!$user instanceof Client) {
+            throw $this->createAccessDeniedException('Vous devez être connecté en tant que client.');
+        }
+
+        $products = $wishlistRepository->findProductsByClient($user, 5);
+        return $this->render('product/show_new_arrivals.html.twig', [
+            'products' => $products,
+        ]);
+    }
+
 
 }
