@@ -1,18 +1,70 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello HomeController!{% endblock %}
+{% block title %}MiniMaxi{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+    <section class="bg-gray-200 py-12">
+        <div class="container mx-auto px-6 text-center">
+            <h2 class="text-4xl font-bold text-gray-800 mb-4">Trouve les éléments qui te correspondent</h2>
+            <p class="text-gray-600 mb-6">Trouve tout ce que tu veux, en petit et en GRAND !</p>
+        </div>
+    </section>
 
-<div class="example-wrapper">
+    <!-- New Arrivals -->
+    <section class="py-12">
+        <div class="container mx-auto px-6">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">Nouveautés</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
 
-    <p class="text-blue-500">Here an import from Hello.vue and tailwindcss</p>
-    <div {{ vue_component('Hello', {name: "MiniMaxi"}) }}>
-        Loading...
-    </div>
-</div>
+                {% for product in products %}
+                    <div class="bg-white p-4 rounded-lg shadow-md">
+                        {% if product.imageProducts|length > 0 %}
+                            <img src="{{ product.imageProducts|first.path }}" alt="{{ product.name }}" class="w-full h-40 object-cover rounded-md">
+                        {% else %}
+                            <img src="" alt="No image available" class="w-full h-40 object-cover rounded-md">
+                        {% endif %}
+                        <h3 class="text-gray-800 font-bold mt-4">{{ product.name }}</h3>
+                        <p class="text-gray-600">{{ product.price }} €</p>
+                    </div>
+                {% else %}
+                    <p class="text-center text-gray-500">Pas de produits trouvés</p>
+                {% endfor %}
+            </div>
+
+            <a href="{{ path('app_show_new_arrivals') }}" class="inline-block mt-4 px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-700">
+                Tout voir
+            </a>
+
+        </div>
+    </section>
+
+    <!-- Top rated -->
+    <section class="py-12">
+        <div class="container mx-auto px-6">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">Meilleures ventes</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+
+                {% for topProduct in topProducts %}
+                    <div class="bg-white p-4 rounded-lg shadow-md">
+                        {% if topProduct.firstImage %}
+                            <img src="{{ topProduct.firstImage }}" alt="{{ topProduct.name }}" class="w-full h-40 object-cover rounded-md">
+                        {% else %}
+                            <img src="" alt="No image available" class="w-full h-40 object-cover rounded-md">
+                        {% endif %}
+                        <h3 class="text-gray-800 font-bold mt-4">{{ topProduct.name }}</h3>
+                        <p class="text-gray-600">{{ topProduct.price }} €</p>
+                    </div>
+                {% else %}
+                    <p class="text-center text-gray-500">Pas de produits trouvés</p>
+                {% endfor %}
+            </div>
+
+            <a href="#" class="inline-block mt-4 px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-700">
+                Tout voir
+            </a>
+
+        </div>
+    </section>
+
+
 {% endblock %}
