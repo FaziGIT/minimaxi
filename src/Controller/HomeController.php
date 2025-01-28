@@ -6,6 +6,7 @@ use App\Entity\Client;
 use App\Repository\ProductRepository;
 use App\Repository\WishlistRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -32,17 +33,28 @@ class HomeController extends AbstractController
         ]);
     }
 
-    #[Route('/wishlist', name: 'whishlist')]
-    public function wishlist(WishlistRepository $wishlistRepository): Response
+    #[Route('/wishlist', name: 'wishlist')]
+    public function wishlist(Request $request, WishlistRepository $wishlistRepository): Response
     {
         $user = $this->getUser();
         if (!$user instanceof Client) {
             throw $this->createAccessDeniedException('Vous devez être connecté en tant que client.');
         }
 
-        $products = $wishlistRepository->findProductsByClient($user, 5);
-        return $this->render('product/show_new_arrivals.html.twig', [
+        // Nombre d'articles par page
+        $limit = 4;
+        $page = max(1, (int)$request->query->get('page', 1));
+        $offset = ($page - 1) * $limit;
+
+        $products = $wishlistRepository->findProductsByClientWithPagination($user, $limit, $offset);
+
+        $totalProducts = $wishlistRepository->countProductsByClient($user);
+
+
+        return $this->render('wishlist/index.html.twig', [
             'products' => $products,
+            'currentPage' => $page,
+            'totalPages' => ceil($totalProducts / $limit),
         ]);
     }
 

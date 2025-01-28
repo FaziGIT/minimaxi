@@ -18,17 +18,32 @@ class WishlistRepository extends ServiceEntityRepository
     }
 
 
-    public function findProductsByClient(Client $client, int $limit): array
+    public function findProductsByClientWithPagination(Client $client, int $limit, int $offset): array
     {
         return $this->createQueryBuilder('w')
             ->innerJoin('w.product', 'p')
-            ->addSelect('p')
+            ->leftJoin('p.imageProducts', 'img')
+            ->select('p.id, p.name, p.price, MIN(img.url) AS image') // Récupère uniquement l'image principale
             ->where('w.client = :client')
             ->setParameter('client', $client)
+            ->groupBy('p.id') // Évite les doublons
             ->setMaxResults($limit)
+            ->setFirstResult($offset)
             ->getQuery()
-            ->getResult();
+            ->getArrayResult();
     }
+
+
+    public function countProductsByClient(Client $client): int
+    {
+        return (int) $this->createQueryBuilder('w')
+            ->select('COUNT(DISTINCT w.product)') // Compter les produits uniques
+            ->where('w.client = :client')
+            ->setParameter('client', $client)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
 
     //    /**
     //     * @return Wishlist[] Returns an array of Wishlist objects

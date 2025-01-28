@@ -3,16 +3,32 @@
 {% block title %}Ma Wishlist{% endblock %}
 
 {% block body %}
-    <h1 class="text-2xl font-bold mb-6">Ma Wishlist</h1>
+    <h1 class="text-2xl font-bold mb-6 mt-6">Ma Wishlist</h1>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {% for product in products %}
             <div class="bg-white p-4 rounded-lg shadow-md">
+                {% if product.image %}
+                    <img src="{{ product.image }}" alt="{{ product.name }}" class="w-full h-40 object-cover rounded-md">
+                {% else %}
+                    <img src="" alt="Image indisponible" class="w-full h-40 object-cover rounded-md">
+                {% endif %}
                 <h3 class="text-gray-800 font-bold">{{ product.name }}</h3>
                 <p class="text-gray-600">{{ product.price }} €</p>
             </div>
         {% else %}
             <p class="text-gray-500">Votre wishlist est vide.</p>
         {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    <div class="mt-4 mb-4 flex justify-center items-center space-x-2">
+        {% if currentPage > 1 %}
+            <a href="{{ path('wishlist', { page: currentPage - 1 }) }}" class="text-black px-4 py-2 rounded-md hover:bg-blue-500">Previous</a>
+        {% endif %}
+
+        {% if currentPage < totalPages %}
+            <a href="{{ path('wishlist', { page: currentPage + 1 }) }}" class="text-black px-4 py-2 rounded-md hover:bg-blue-500">Next</a>
+        {% endif %}
     </div>
 {% endblock %}
