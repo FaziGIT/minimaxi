@@ -3,9 +3,12 @@
 namespace App\Controller;
 
 use App\Entity\Client;
+use App\Entity\Product;
 use App\Repository\ProductRepository;
 use App\Repository\WishlistRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -32,19 +35,52 @@ class HomeController extends AbstractController
         ]);
     }
 
-    #[Route('/wishlist', name: 'whishlist')]
-    public function wishlist(WishlistRepository $wishlistRepository): Response
+    #[Route('/wishlist', name: 'wishlist')]
+    public function wishlist(Request $request, WishlistRepository $wishlistRepository): Response
     {
         $user = $this->getUser();
         if (!$user instanceof Client) {
             throw $this->createAccessDeniedException('Vous devez être connecté en tant que client.');
         }
 
-        $products = $wishlistRepository->findProductsByClient($user, 5);
-        return $this->render('product/show_new_arrivals.html.twig', [
+        // Nombre d'articles par page
+        $limit = 6;
+        $page = max(1, (int)$request->query->get('page', 1));
+        $offset = ($page - 1) * $limit;
+
+        $products = $wishlistRepository->findProductsByClientWithPagination($user, $limit, $offset);
+
+        $totalProducts = $wishlistRepository->countProductsByClient($user);
+
+
+        return $this->render('wishlist/index.html.twig', [
             'products' => $products,
+            'currentPage' => $page,
+            'totalPages' => ceil($totalProducts / $limit),
         ]);
     }
 
+    #[Route('/wishlist/{id}', name: 'wishlist_remove', methods: ['POST'])]
+    public function removeFromWishlist(Request $request, Product $product, EntityManagerInterface $entityManager, WishlistRepository $wishlistRepository): Response
+    {
+        $user = $this->getUser();
+        if (!$user instanceof Client) {
+            throw $this->createAccessDeniedException('Vous devez être connecté en tant que client.');
+        }
+
+        $currentPage = $request->query->getInt('page', 1);
+        if ($this->isCsrfTokenValid('remove_wishlist' . $product->getId(), $request->getPayload()->getString('_token'))) {
+            $wishlistItem = $wishlistRepository->findOneBy([
+                'client' => $user,
+                'product' => $product
+            ]);
+            if ($wishlistItem) {
+                $entityManager->remove($wishlistItem);
+                $entityManager->flush();
+            }
+        }
+
+        return $this->redirectToRoute('wishlist', ['page' => $currentPage]);
+    }
 
 }
