@@ -44,7 +44,7 @@ class HomeController extends AbstractController
         }
 
         // Nombre d'articles par page
-        $limit = 3;
+        $limit = 6;
         $page = max(1, (int)$request->query->get('page', 1));
         $offset = ($page - 1) * $limit;
 
@@ -68,6 +68,7 @@ class HomeController extends AbstractController
             throw $this->createAccessDeniedException('Vous devez être connecté en tant que client.');
         }
 
+        $currentPage = $request->query->getInt('page', 1);
         if ($this->isCsrfTokenValid('remove_wishlist' . $product->getId(), $request->getPayload()->getString('_token'))) {
             $wishlistItem = $wishlistRepository->findOneBy([
                 'client' => $user,
@@ -79,8 +80,7 @@ class HomeController extends AbstractController
             }
         }
 
-        return $this->redirectToRoute('wishlist');
+        return $this->redirectToRoute('wishlist', ['page' => $currentPage]);
     }
-
 
 }
