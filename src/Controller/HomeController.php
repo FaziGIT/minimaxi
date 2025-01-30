@@ -3,8 +3,10 @@
 namespace App\Controller;
 
 use App\Entity\Client;
+use App\Entity\Product;
 use App\Repository\ProductRepository;
 use App\Repository\WishlistRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -42,7 +44,7 @@ class HomeController extends AbstractController
         }
 
         // Nombre d'articles par page
-        $limit = 4;
+        $limit = 3;
         $page = max(1, (int)$request->query->get('page', 1));
         $offset = ($page - 1) * $limit;
 
@@ -56,6 +58,28 @@ class HomeController extends AbstractController
             'currentPage' => $page,
             'totalPages' => ceil($totalProducts / $limit),
         ]);
+    }
+
+    #[Route('/wishlist/{id}', name: 'wishlist_remove', methods: ['POST'])]
+    public function removeFromWishlist(Request $request, Product $product, EntityManagerInterface $entityManager, WishlistRepository $wishlistRepository): Response
+    {
+        $user = $this->getUser();
+        if (!$user instanceof Client) {
+            throw $this->createAccessDeniedException('Vous devez être connecté en tant que client.');
+        }
+
+        if ($this->isCsrfTokenValid('remove_wishlist' . $product->getId(), $request->getPayload()->getString('_token'))) {
+            $wishlistItem = $wishlistRepository->findOneBy([
+                'client' => $user,
+                'product' => $product
+            ]);
+            if ($wishlistItem) {
+                $entityManager->remove($wishlistItem);
+                $entityManager->flush();
+            }
+        }
+
+        return $this->redirectToRoute('wishlist');
     }
 
 

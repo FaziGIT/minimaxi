@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Client;
+use App\Entity\Product;
 use App\Entity\Wishlist;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -26,13 +27,12 @@ class WishlistRepository extends ServiceEntityRepository
             ->select('p.id, p.name, p.price, MIN(img.url) AS image') // Récupère uniquement l'image principale
             ->where('w.client = :client')
             ->setParameter('client', $client)
-            ->groupBy('p.id') // Évite les doublons
+            ->groupBy('p.id')
             ->setMaxResults($limit)
             ->setFirstResult($offset)
             ->getQuery()
             ->getArrayResult();
     }
-
 
     public function countProductsByClient(Client $client): int
     {
