@@ -67,6 +67,10 @@ migrate:
 composer-install:
 	@docker exec -it $(PHP_CONTAINER) composer install
 
+.PHONY: test
+test:
+	@docker exec -it $(PHP_CONTAINER) php bin/phpunit
+
 # Éviter les erreurs pour les cibles dynamiques
 %:
 	@:
