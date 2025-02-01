@@ -12,6 +12,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Validator\Constraints\Image;
 
 class ImageProductType extends AbstractType
 {
@@ -30,6 +31,17 @@ class ImageProductType extends AbstractType
                 'required' => false,
                 'attr' => [
                     'class' => 'mb-2 w-[100px]'
+                ],
+                'constraints' => [
+                    new Image([
+                        'maxSize' => '5M',
+                        'mimeTypes' => [
+                            'image/jpeg',
+                            'image/png',
+                            'image/gif',
+                        ],
+                        'mimeTypesMessage' => 'Veuillez télécharger une image valide (jpeg, png, gif)',
+                    ])
                 ]
             ]);
 

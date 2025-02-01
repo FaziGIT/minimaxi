@@ -14,6 +14,9 @@ use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\PositiveOrZero;
+use Symfony\Component\Validator\Constraints\Type;
 
 class ProductType extends AbstractType
 {
@@ -23,18 +26,32 @@ class ProductType extends AbstractType
             ->add('name', TextType::class, [
                 'label' => 'Nom du produit',
                 'attr' => ['class' => 'floating-input'],
+                'constraints' => [
+                    new NotBlank(message: 'Veuillez renseigner un nom'),
+                ],
             ])
             ->add('description', TextType::class, [
                 'label' => 'Description du produit',
                 'attr' => ['class' => 'floating-input'],
+                'constraints' => [
+                    new NotBlank(message: 'Veuillez renseigner une description'),
+                ],
             ])
             ->add('price', NumberType::class, [
                 'label' => 'Prix du produit',
                 'attr' => ['class' => 'floating-input', 'step' => '0.1'],
+                'invalid_message' => 'Le prix doit être un nombre décimal',
+                'constraints' => [
+                    new NotBlank(message: 'Veuillez renseigner un prix'),
+                ]
             ])
             ->add('stockQuantity', IntegerType::class, [
                 'label' => 'Quantité en stock',
                 'attr' => ['class' => 'floating-input'],
+                'constraints' => [
+                    new NotBlank(message: 'Veuillez renseigner une quantité'),
+                    new PositiveOrZero(message: 'La quantité doit être un nombre positif ou nul'),
+                ]
             ])
             ->add('size', ChoiceType::class, [
                 'choices' => [
