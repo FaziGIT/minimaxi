@@ -42,7 +42,7 @@ class Product
     /**
      * @var Collection<int, ImageProduct>
      */
-    #[ORM\OneToMany(targetEntity: ImageProduct::class, mappedBy: 'product')]
+    #[ORM\OneToMany(targetEntity: ImageProduct::class, mappedBy: 'product', cascade: ['persist'])]
     private Collection $imageProducts;
 
     /**
@@ -69,6 +69,7 @@ class Product
         $this->orderItems = new ArrayCollection();
         $this->reviews = new ArrayCollection();
         $this->wishlists = new ArrayCollection();
+        $this->createdAt = new \DateTimeImmutable();
     }
 
     public function getId(): ?int

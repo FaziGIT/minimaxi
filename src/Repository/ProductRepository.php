@@ -16,6 +16,10 @@ class ProductRepository extends ServiceEntityRepository
         parent::__construct($registry, Product::class);
     }
 
+    /**
+     * @param int $limit
+     * @return array<Product>
+     */
     public function findMostRecentProducts(int $limit): array
     {
         return $this->createQueryBuilder('p')

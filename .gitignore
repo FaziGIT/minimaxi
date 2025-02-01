@@ -28,3 +28,6 @@ yarn-error.log
 ###> phpstorm ###
 /.idea/
 ### phpstorm ###
+
+/public/img/avatar
+/public/img/products
