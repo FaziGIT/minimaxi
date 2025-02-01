@@ -25,13 +25,6 @@ final class ProductController extends AbstractController
     public function newProduct(Request $request, EntityManagerInterface $entityManager, CategoryRepository $categoryRepository): Response
     {
         $product = new Product();
-        $product->setName('Nom du produit');
-        $product->setDescription('Description du produit');
-        $product->setPrice(0);
-        $product->setStockQuantity(0);
-        $product->setSize(SizeProductEnum::MINI);
-        $category = $categoryRepository->findOneBy([]);
-        $product->setCategory($category);
         $form = $this->createForm(ProductType::class, $product);
         $form->handleRequest($request);
 
