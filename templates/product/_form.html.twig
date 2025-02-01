@@ -5,12 +5,24 @@
     <label for="{{ form.name.vars.id }}"
            class="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Nom
         du produit</label>
+
+    {% if form_errors(form.name) %}
+        <div class="text-red-500 text-xs italic">
+            {{ form_errors(form.name) }}
+        </div>
+    {% endif %}
 </div>
 
 <div class="relative z-0 w-full mb-5 group">
     {{ form_widget(form.description, {'attr': {'class': 'peer block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600'}}) }}
     <label for="{{ form.description.vars.id }}"
            class="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Description</label>
+
+    {% if form_errors(form.description) %}
+        <div class="text-red-500 text-xs italic">
+            {{ form_errors(form.description) }}
+        </div>
+    {% endif %}
 </div>
 
 <div class="relative z-0 w-full mb-5 group">
@@ -18,6 +30,12 @@
     <label for="{{ form.price.vars.id }}"
            class="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Prix
         (€)</label>
+
+    {% if form_errors(form.price) %}
+        <div class="text-red-500 text-xs italic">
+            {{ form_errors(form.price) }}
+        </div>
+    {% endif %}
 </div>
 
 <div class="relative z-0 w-full mb-5 group">
@@ -25,20 +43,38 @@
     <label for="{{ form.stockQuantity.vars.id }}"
            class="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Quantité
         en stock</label>
+
+    {% if form_errors(form.stockQuantity) %}
+        <div class="text-red-500 text-xs italic">
+            {{ form_errors(form.stockQuantity) }}
+        </div>
+    {% endif %}
+
 </div>
 
 <div class="relative z-0 w-full mb-5 group">
     {{ form_widget(form.size, {'attr': {'class': 'peer block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 focus:outline-none focus:ring-0 focus:border-blue-600'}}) }}
     <label for="{{ form.size.vars.id }}"
            class="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Taille</label>
+
+    {% if form_errors(form.size) %}
+        <div class="text-red-500 text-xs italic">
+            {{ form_errors(form.size) }}
+        </div>
+    {% endif %}
 </div>
 
 <div class="relative z-0 w-full mb-5 group">
     {{ form_widget(form.category, {'attr': {'class': 'peer block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 focus:outline-none focus:ring-0 focus:border-blue-600'}}) }}
     <label for="{{ form.category.vars.id }}"
            class="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Catégorie</label>
-</div>
 
+    {% if form_errors(form.category) %}
+        <div class="text-red-500 text-xs italic">
+            {{ form_errors(form.category) }}
+        </div>
+    {% endif %}
+</div>
 
 <div class="row js-genus-scientist-wrapper flex flex-wrap gap-4 mb-2"
      data-prototype="{{ form_widget(form.imageProducts.vars.prototype)|e('html_attr') }}"
@@ -73,10 +109,14 @@
                     </div>
                 {% endif %}
                 {{ form_widget(imageProductForm.image, {'attr': {'class' : 'w-[100px]'}}) }}
+                {% if form_errors(imageProductForm.image) %}
+                    <div class="text-red-500 text-xs italic">
+                        {{ form_errors(imageProductForm.image) }}
+                    </div>
+                {% endif %}
             </div>
         {% endfor %}
     </div>
-
 </div>
 
 <button type="button"
@@ -101,7 +141,6 @@
     Ajouter une image
 </button>
 
-
 <div class="flex space-x-4 text-center">
     <a class="flex-1 bg-black hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300"
        href="{{ path('app_product_index') }}">Revenir</a>
@@ -111,9 +150,8 @@
         Ajouter le produit
     </button>
 </div>
-
-
 {{ form_end(form) }}
+
 
 {% block javascripts %}
     <script>
