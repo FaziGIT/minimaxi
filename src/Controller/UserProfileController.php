@@ -6,7 +6,6 @@ use App\Entity\Client;
 use App\Enum\OrderStatusEnum;
 use App\Repository\DiscountCodeRepository;
 use App\Repository\OrderRepository;
-use App\Repository\WishlistRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -14,7 +13,7 @@ use Symfony\Component\Routing\Attribute\Route;
 class UserProfileController extends AbstractController
 {
     #[Route('/profile', name: 'app_user_profile')]
-    public function profile(WishlistRepository $wishlistRepository, OrderRepository $orderRepository, DiscountCodeRepository $discountCodeRepository): Response
+    public function profile(OrderRepository $orderRepository, DiscountCodeRepository $discountCodeRepository): Response
     {
         $user = $this->getUser();
         if (!$user instanceof Client) {
