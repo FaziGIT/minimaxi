@@ -21,7 +21,6 @@ class UserProfileController extends AbstractController
             throw $this->createAccessDeniedException('Vous devez être connecté.');
         }
 
-        $wishlists = $wishlistRepository->findBy(['client' => $user], ['id' => 'DESC'], 3);
         $discountCodes = $discountCodeRepository->findLatestDiscountCode(3);
 
         $currentStatuses = [
@@ -29,12 +28,11 @@ class UserProfileController extends AbstractController
             OrderStatusEnum::PENDING->value,
             OrderStatusEnum::SHIPPED->value,
         ];
-        $currentOrders = $orderRepository->findByStatuses($user, $currentStatuses, 3);
-        $deliveredOrders = $orderRepository->findByStatus($user, OrderStatusEnum::DELIVERED->value, 3);
+        $currentOrders = $orderRepository->findByStatuses($user, $currentStatuses, 4);
+        $deliveredOrders = $orderRepository->findByStatus($user, OrderStatusEnum::DELIVERED->value, 4);
 
         return $this->render('user_profile/index.html.twig', [
             'user' => $user,
-            'wishlists' => $wishlists,
             'currentOrders' => $currentOrders,
             'deliveredOrders' => $deliveredOrders,
             'discountCodes' => $discountCodes,
