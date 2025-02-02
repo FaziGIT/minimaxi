@@ -16,6 +16,17 @@ class DiscountCodeRepository extends ServiceEntityRepository
         parent::__construct($registry, DiscountCode::class);
     }
 
+    public function findLatestDiscountCode(int $limit): array
+    {
+        return $this->createQueryBuilder('d')
+            ->where('d.validUntil > :today')
+            ->setParameter('today', new \DateTime())
+            ->orderBy('d.validUntil', 'ASC')
+            ->setMaxResults(3)
+            ->getQuery()
+            ->getResult();
+    }
+
     //    /**
     //     * @return DiscountCode[] Returns an array of DiscountCode objects
     //     */
