@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Client;
 use App\Entity\Order;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -15,6 +16,34 @@ class OrderRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Order::class);
     }
+
+    public function findByStatuses(Client $user, array $statuses): array
+    {
+        return $this->createQueryBuilder('o')
+            ->where('o.client = :user')
+            ->andWhere('o.status IN (:statuses)')
+            ->setParameter('user', $user)
+            ->setParameter('statuses', $statuses)
+            ->orderBy('o.createdAt', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findByStatus(Client $user, string $status, int $limit): array
+    {
+        return $this->createQueryBuilder('o')
+            ->where('o.client = :user')
+            ->andWhere('o.status = :status')
+            ->setParameter('user', $user)
+            ->setParameter('status', $status)
+            ->orderBy('o.createdAt', 'DESC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+    }
+
+
+
 
 //    /**
 //     * @return Order[] Returns an array of Order objects

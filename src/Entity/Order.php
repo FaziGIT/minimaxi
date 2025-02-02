@@ -89,12 +89,12 @@ class Order
         return $this;
     }
 
-    public function getState(): ?OrderStatusEnum
+    public function getStatus(): ?OrderStatusEnum
     {
         return $this->status;
     }
 
-    public function setState(OrderStatusEnum $status): static
+    public function setStatus(OrderStatusEnum $status): static
     {
         $this->status = $status;
 
