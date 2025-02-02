@@ -17,7 +17,7 @@ class OrderRepository extends ServiceEntityRepository
         parent::__construct($registry, Order::class);
     }
 
-    public function findByStatuses(Client $user, array $statuses): array
+    public function findByStatuses(Client $user, array $statuses, int $limit): array
     {
         return $this->createQueryBuilder('o')
             ->where('o.client = :user')
@@ -25,6 +25,7 @@ class OrderRepository extends ServiceEntityRepository
             ->setParameter('user', $user)
             ->setParameter('statuses', $statuses)
             ->orderBy('o.createdAt', 'DESC')
+            ->setMaxResults($limit)
             ->getQuery()
             ->getResult();
     }

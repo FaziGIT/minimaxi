@@ -29,7 +29,7 @@ class UserProfileController extends AbstractController
             OrderStatusEnum::PENDING->value,
             OrderStatusEnum::SHIPPED->value,
         ];
-        $currentOrders = $orderRepository->findByStatuses($user, $currentStatuses);
+        $currentOrders = $orderRepository->findByStatuses($user, $currentStatuses, 3);
         $deliveredOrders = $orderRepository->findByStatus($user, OrderStatusEnum::DELIVERED->value, 3);
 
         return $this->render('user_profile/index.html.twig', [
