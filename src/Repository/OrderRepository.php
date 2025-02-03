@@ -4,8 +4,10 @@ namespace App\Repository;
 
 use App\Entity\Client;
 use App\Entity\Order;
+use App\Enum\OrderStatusEnum;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @extends ServiceEntityRepository<Order>
@@ -70,4 +72,23 @@ class OrderRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
+    /**
+     * Fonction pour trouver un panier en cours pour l'utilisateur connecté
+     * @param UserInterface $user
+     * @return Order|null
+     */
+    public function findPendingOrderById(UserInterface $user): ?Order
+    {
+        return $this->createQueryBuilder('o')
+            ->select('o', 'oi', 'p', 'ip')
+            ->innerJoin('o.orderItems', 'oi')
+            ->innerJoin('oi.product', 'p')
+            ->leftJoin('p.imageProducts', 'ip')
+            ->andWhere('o.client = :user')
+            ->andWhere('o.status = :status')
+            ->setParameter('user', $user)
+            ->setParameter('status', OrderStatusEnum::PENDING)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 }
