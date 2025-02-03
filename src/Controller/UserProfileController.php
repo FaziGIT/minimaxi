@@ -87,16 +87,19 @@ class UserProfileController extends AbstractController
         }
 
         $form = $this->createForm(ClientEditType::class, $user);
-
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($user);
-            $entityManager->flush();
+        if ($form->isSubmitted()) {
+            if ($form->isValid()) {
+                $entityManager->persist($user);
+                $entityManager->flush();
 
-            $this->addFlash('success', 'Vos informations ont été mises à jour.');
+                $this->addFlash('success', 'Vos informations ont été mises à jour.');
 
-            return $this->redirectToRoute('app_profile_edit');
+                return $this->redirectToRoute('app_profile_edit');
+            } else {
+                $this->addFlash('error', 'Une erreur est survenue. Veuillez vérifier vos informations.');
+            }
         }
 
         return $this->render('user_profile/edit.html.twig', [
