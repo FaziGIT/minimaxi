@@ -6,6 +6,7 @@ use App\Entity\Client;
 use App\Entity\Product;
 use App\Entity\Wishlist;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -43,6 +44,30 @@ class WishlistRepository extends ServiceEntityRepository
             ->getQuery()
             ->getSingleScalarResult();
     }
+
+    public function findPaginatedByClient(Client $client, int $limit, int $offset): array
+    {
+        $qb = $this->createQueryBuilder('w')
+            ->innerJoin('w.product', 'p')
+            ->leftJoin('p.imageProducts', 'img')
+            ->addSelect('p', 'img') // Fetch the full product and image entities
+            ->where('w.client = :client')
+            ->setParameter('client', $client)
+            ->orderBy('p.name', 'ASC') // Sort by product name
+            ->setFirstResult($offset)
+            ->setMaxResults($limit);
+
+        $query = $qb->getQuery();
+
+        // Use the Doctrine Paginator
+        $paginator = new Paginator($query);
+
+        return [
+            iterator_to_array($paginator), // Paginated results
+            $paginator->count(),          // Total number of results
+        ];
+    }
+
 
 
     //    /**
