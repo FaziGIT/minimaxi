@@ -9,18 +9,20 @@
         </h1>
 
         {% if orders|length > 0 %}
-            <ul>
+            <ul class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {% for order in orders %}
-                    <li class="border bg-white shadow-md p-4 rounded-lg mb-4">
-                        <p><strong>Date :</strong> {{ order.createdAt|date("d/m/Y") }}</p>
-                        <p><strong>Montant total :</strong> {{ order.totalPrice }} €</p>
-                        <p><strong>Statut :</strong> {{ order.status.name }}</p>
-                        <p><strong>Articles :</strong></p>
-                        <ul class="ml-4">
-                            {% for item in order.orderItems %}
-                                <li>- {{ item.product.name }} ({{ item.quantity }})</li>
-                            {% endfor %}
-                        </ul>
+                    <li class="border bg-white shadow-md rounded-lg overflow-hidden relative max-w-sm fixed-height">
+                        <div class="h-full p-4 overflow-y-auto">
+                            <p><strong>Date :</strong> {{ order.createdAt|date("d/m/Y") }}</p>
+                            <p><strong>Montant total :</strong> {{ order.totalPrice }} €</p>
+                            <p><strong>Statut :</strong> {{ order.status.name }}</p>
+                            <p><strong>Articles :</strong></p>
+                            <ul class="ml-4">
+                                {% for item in order.orderItems %}
+                                    <li>- {{ item.product.name }} ({{ item.quantity }})</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
                     </li>
                 {% endfor %}
             </ul>
@@ -28,4 +30,12 @@
             <p class="text-gray-500 text-center">Aucune commande trouvée.</p>
         {% endif %}
     </div>
+
+    <style>
+        .fixed-height {
+            max-height: 212px;
+            overflow-y: auto;
+        }
+    </style>
+
 {% endblock %}
