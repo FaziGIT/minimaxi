@@ -4,8 +4,10 @@ namespace App\Controller;
 
 use App\Entity\Client;
 use App\Enum\OrderStatusEnum;
+use App\Form\ClientEditType;
 use App\Repository\DiscountCodeRepository;
 use App\Repository\OrderRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -74,4 +76,31 @@ class UserProfileController extends AbstractController
         ]);
     }
 
+
+    #[Route('/profile/edit', name: 'app_profile_edit')]
+    public function editProfile(Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $user = $this->getUser();
+
+        if (!$user instanceof Client) {
+            throw $this->createAccessDeniedException('Vous devez être connecté en tant que client.');
+        }
+
+        $form = $this->createForm(ClientEditType::class, $user);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->persist($user);
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Vos informations ont été mises à jour.');
+
+            return $this->redirectToRoute('app_profile_edit');
+        }
+
+        return $this->render('user_profile/edit.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
 }
