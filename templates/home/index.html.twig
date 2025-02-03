@@ -19,7 +19,7 @@
                 {% for product in products %}
                     <div class="bg-white p-4 rounded-lg shadow-md">
                         {% if product.imageProducts|length > 0 %}
-                            <img src="{{ product.imageProducts|first.path }}" alt="{{ product.name }}" class="w-full h-40 object-cover rounded-md">
+                            <img src="{{ product.imageProducts|first.url }}" alt="{{ product.name }}" class="w-full h-40 object-cover rounded-md">
                         {% else %}
                             <img src="" alt="No image available" class="w-full h-40 object-cover rounded-md">
                         {% endif %}
