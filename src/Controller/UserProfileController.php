@@ -37,4 +37,31 @@ class UserProfileController extends AbstractController
             'discountCodes' => $discountCodes,
         ]);
     }
+
+    #[Route('/profile/orders/{type}', name: 'app_user_orders')]
+    public function viewAllOrders(string $type, OrderRepository $orderRepository): Response
+    {
+        $user = $this->getUser();
+        if (!$user instanceof Client) {
+            throw $this->createAccessDeniedException('Vous devez être connecté.');
+        }
+
+        $orders = [];
+        if ($type === 'current') {
+            $statuses = [
+                OrderStatusEnum::PAID->value,
+                OrderStatusEnum::PENDING->value,
+                OrderStatusEnum::SHIPPED->value,
+            ];
+            $orders = $orderRepository->findByStatuses($user, $statuses);
+        } elseif ($type === 'delivered') {
+            $orders = $orderRepository->findByStatus($user, OrderStatusEnum::DELIVERED->value);
+        }
+
+        return $this->render('user_profile/orders.html.twig', [
+            'orders' => $orders,
+            'type' => $type,
+        ]);
+    }
+
 }

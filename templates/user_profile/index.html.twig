@@ -64,7 +64,7 @@
                 </ul>
                 {% if currentOrders|length > 3 %}
                     <div class="mt-6">
-                        <a href="#" class="text-white bg-black px-4 py-2 rounded-md hover:bg-gray-700">Tout afficher</a>
+                        <a href="{{ path('app_user_orders', {type: 'current'}) }}" class="text-white bg-black px-4 py-2 rounded-md hover:bg-gray-700">Tout afficher</a>
                     </div>
                 {% endif %}
             {% else %}
@@ -92,7 +92,7 @@
                 </ul>
                 {% if deliveredOrders|length > 3 %}
                     <div class="mt-6">
-                        <a href="#" class="text-white bg-black px-4 py-2 rounded-md hover:bg-gray-700">Tout afficher</a>
+                        <a href="{{ path('app_user_orders', {type: 'delivered'}) }}" class="text-white bg-black px-4 py-2 rounded-md hover:bg-gray-700">Tout afficher</a>
                     </div>
                 {% endif %}
             {% else %}

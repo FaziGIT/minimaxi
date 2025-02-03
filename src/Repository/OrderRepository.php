@@ -19,32 +19,37 @@ class OrderRepository extends ServiceEntityRepository
         parent::__construct($registry, Order::class);
     }
 
-    public function findByStatuses(Client $user, array $statuses, int $limit): array
+    public function findByStatuses(Client $user, array $statuses, int $limit = null): array
     {
-        return $this->createQueryBuilder('o')
+        $qb = $this->createQueryBuilder('o')
             ->where('o.client = :user')
             ->andWhere('o.status IN (:statuses)')
             ->setParameter('user', $user)
             ->setParameter('statuses', $statuses)
-            ->orderBy('o.createdAt', 'DESC')
-            ->setMaxResults($limit)
-            ->getQuery()
-            ->getResult();
+            ->orderBy('o.createdAt', 'DESC');
+
+        if ($limit) {
+            $qb->setMaxResults($limit);
+        }
+
+        return $qb->getQuery()->getResult();
     }
 
-    public function findByStatus(Client $user, string $status, int $limit): array
+    public function findByStatus(Client $user, string $status, int $limit = null): array
     {
-        return $this->createQueryBuilder('o')
+        $qb = $this->createQueryBuilder('o')
             ->where('o.client = :user')
             ->andWhere('o.status = :status')
             ->setParameter('user', $user)
             ->setParameter('status', $status)
-            ->orderBy('o.createdAt', 'DESC')
-            ->setMaxResults($limit)
-            ->getQuery()
-            ->getResult();
-    }
+            ->orderBy('o.createdAt', 'DESC');
 
+        if ($limit) {
+            $qb->setMaxResults($limit);
+        }
+
+        return $qb->getQuery()->getResult();
+    }
 
 
 
