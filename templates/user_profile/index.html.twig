@@ -64,9 +64,9 @@
             {% endif %}
         </div>
 
-        <!-- Carte Dernières Commandes Passées -->
+        <!-- Historiques des commandes -->
         <div class="p-6 mb-6">
-            <h2 class="text-xl font-semibold mb-4">Mes Dernières Commandes Passées</h2>
+            <h2 class="text-xl font-semibold mb-4">Historiques des commandes</h2>
             {% if deliveredOrders|length > 0 %}
                 <ul class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {% for order in deliveredOrders|slice(0, 3) %}
