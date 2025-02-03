@@ -6,6 +6,7 @@ use App\Entity\Client;
 use App\Entity\Order;
 use App\Enum\OrderStatusEnum;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -50,6 +51,45 @@ class OrderRepository extends ServiceEntityRepository
 
         return $qb->getQuery()->getResult();
     }
+
+    public function findPaginatedByStatuses(Client $user, array $statuses, int $page, int $limit): array
+    {
+        $qb = $this->createQueryBuilder('o')
+            ->where('o.client = :user')
+            ->andWhere('o.status IN (:statuses)')
+            ->setParameter('user', $user)
+            ->setParameter('statuses', $statuses)
+            ->orderBy('o.createdAt', 'DESC')
+            ->setFirstResult(($page - 1) * $limit)
+            ->setMaxResults($limit);
+
+        $paginator = new Paginator($qb->getQuery());
+
+        return [
+            iterator_to_array($paginator),
+            $paginator->count(),
+        ];
+    }
+
+    public function findPaginatedByStatus(Client $user, string $status, int $page, int $limit): array
+    {
+        $qb = $this->createQueryBuilder('o')
+            ->where('o.client = :user')
+            ->andWhere('o.status = :status')
+            ->setParameter('user', $user)
+            ->setParameter('status', $status)
+            ->orderBy('o.createdAt', 'DESC')
+            ->setFirstResult(($page - 1) * $limit)
+            ->setMaxResults($limit);
+
+        $paginator = new Paginator($qb->getQuery());
+
+        return [
+            iterator_to_array($paginator),
+            $paginator->count(),
+        ];
+    }
+
 
 
 
