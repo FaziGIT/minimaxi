@@ -20,6 +20,11 @@ final class OrderController extends AbstractController
     {
         $cart = $orderRepository->findPendingOrderById($this->getUser());
 
+        // Call the Voter
+        if (!$this->isGranted('view', $cart)) {
+            return $this->redirectToRoute('app_home');
+        }
+
         return $this->render('order/index.html.twig', [
             'cart' => $cart,
         ]);
@@ -30,9 +35,12 @@ final class OrderController extends AbstractController
     public function validateCart(OrderRepository $orderRepository, EntityManagerInterface $entityManager): Response
     {
         $cart = $orderRepository->findPendingOrderById($this->getUser());
-        if (!$cart) {
+
+        // Call the Voter
+        if (!$this->isGranted('validate', $cart)) {
             return $this->redirectToRoute('app_order_index', [], Response::HTTP_SEE_OTHER);
         }
+
         $cart->setStatus(OrderStatusEnum::PAID);
         $cart->setUpdatedAt(new DateTimeImmutable());
 
@@ -56,6 +64,10 @@ final class OrderController extends AbstractController
     #[Route('/cart/update/{id}', name: 'app_order_update_item', methods: ['POST'])]
     public function updateQuantityOrderItem(OrderItem $orderItem, Request $request, EntityManagerInterface $entityManager): Response
     {
+        if ($orderItem->getLinkedOrder()->getClient() !== $this->getUser()) {
+            return $this->redirectToRoute('app_order_index', [], Response::HTTP_SEE_OTHER);
+        }
+
         $order = $orderItem->getLinkedOrder();
         $action = $request->request->get('action');
 
