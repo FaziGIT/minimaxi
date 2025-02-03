@@ -2,80 +2,143 @@
 
 namespace App\Controller;
 
-use App\Entity\Order;
-use App\Form\OrderType;
+use App\Entity\OrderItem;
+use App\Enum\OrderStatusEnum;
+use App\Repository\DiscountCodeRepository;
 use App\Repository\OrderRepository;
+use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/order')]
 final class OrderController extends AbstractController
 {
-    #[Route(name: 'app_order_index', methods: ['GET'])]
+    #[Route('/cart', name: 'app_order_index', methods: ['GET'])]
     public function index(OrderRepository $orderRepository): Response
     {
+        $cart = $orderRepository->findPendingOrderById($this->getUser());
+
         return $this->render('order/index.html.twig', [
-            'orders' => $orderRepository->findAll(),
+            'cart' => $cart,
         ]);
     }
 
-    #[Route('/new', name: 'app_order_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+//    Passer le Voter pour valider la validite du panier
+    #[Route('/cart/validate', name: 'app_order_validate', methods: ['GET'])]
+    public function validateCart(OrderRepository $orderRepository, EntityManagerInterface $entityManager): Response
     {
-        $order = new Order();
-        $form = $this->createForm(OrderType::class, $order);
-        $form->handleRequest($request);
+        $cart = $orderRepository->findPendingOrderById($this->getUser());
+        if (!$cart) {
+            return $this->redirectToRoute('app_order_index', [], Response::HTTP_SEE_OTHER);
+        }
+        $cart->setStatus(OrderStatusEnum::PAID);
+        $cart->setUpdatedAt(new DateTimeImmutable());
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($order);
-            $entityManager->flush();
+        $entityManager->flush();
+        $this->addFlash('success', 'Votre commande a été payée avec succès');
+        return $this->redirectToRoute('app_order_index', [], Response::HTTP_SEE_OTHER);
+    }
 
+    #[Route('/cart/remove/{id}', name: 'app_order_remove_item', methods: ['GET'])]
+    public function deleteOrderItemFromCart(OrderItem $orderItem, EntityManagerInterface $entityManager): Response
+    {
+        if ($orderItem->getLinkedOrder()->getClient() !== $this->getUser()) {
             return $this->redirectToRoute('app_order_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->render('order/new.html.twig', [
-            'order' => $order,
-            'form' => $form,
-        ]);
+        $entityManager->remove($orderItem);
+        $entityManager->flush();
+        return $this->redirectToRoute('app_order_index', [], Response::HTTP_SEE_OTHER);
     }
 
-    #[Route('/{id}', name: 'app_order_show', methods: ['GET'])]
-    public function show(Order $order): Response
+    #[Route('/cart/update/{id}', name: 'app_order_update_item', methods: ['POST'])]
+    public function updateQuantityOrderItem(OrderItem $orderItem, Request $request, EntityManagerInterface $entityManager): Response
     {
-        return $this->render('order/show.html.twig', [
-            'order' => $order,
-        ]);
+        $order = $orderItem->getLinkedOrder();
+        $action = $request->request->get('action');
+
+        if ($action === 'increase') {
+            // regarder si il ya assez en stock
+            $product = $orderItem->getProduct();
+            if ($product->getStockQuantity() < $orderItem->getQuantity() + 1) {
+                $this->addFlash('error', 'Stock insuffisant pour l\'article ' . $product->getName());
+                return $this->redirectToRoute('app_order_index', [], Response::HTTP_SEE_OTHER);
+            }
+            $orderItem->setQuantity($orderItem->getQuantity() + 1);
+        } elseif ($action === 'decrease' && $orderItem->getQuantity() > 1) {
+            $orderItem->setQuantity($orderItem->getQuantity() - 1);
+        } elseif ($action === 'decrease' && $orderItem->getQuantity() === 1) {
+            return $this->redirectToRoute('app_order_remove_item', ['id' => $orderItem->getId()], Response::HTTP_SEE_OTHER);
+        }
+
+        // update global price
+        $totalPrice = 0;
+        foreach ($order->getOrderItems() as $item) {
+            $item->setGlobalPrice($item->getProduct()->getPrice() * $item->getQuantity());
+            $totalPrice += $item->getGlobalPrice();
+        }
+
+        // check if discount code is applied
+        if ($order->getAppliedDiscount()) {
+            $totalPrice = $totalPrice - ($totalPrice * $order->getAppliedDiscount()->getPercentage() / 100);
+        }
+
+        $order->setTotalPrice($totalPrice);
+        $entityManager->flush();
+        return $this->redirectToRoute('app_order_index', [], Response::HTTP_SEE_OTHER);
     }
 
-    #[Route('/{id}/edit', name: 'app_order_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Order $order, EntityManagerInterface $entityManager): Response
+    #[Route('/cart/apply-discount', name: 'app_order_apply_discount', methods: ['POST'])]
+    public function appliedDiscountCode(OrderRepository $orderRepository, DiscountCodeRepository $discountCodeRepository, Request $request, EntityManagerInterface $entityManager): Response
     {
-        $form = $this->createForm(OrderType::class, $order);
-        $form->handleRequest($request);
+        $cart = $orderRepository->findPendingOrderById($this->getUser());
+        $discountCode = strtoupper($request->request->get('discountCode'));
+        $verifiedDiscountCode = $discountCodeRepository->findOneBy(['code' => $discountCode]);
+        $totalGlobalPrice = 0;
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
-
+        if (!$verifiedDiscountCode) {
+            $this->addFlash('errorDiscountCode', 'Code de réduction invalide');
             return $this->redirectToRoute('app_order_index', [], Response::HTTP_SEE_OTHER);
+        } elseif ($verifiedDiscountCode->getValidUntil() < new DateTimeImmutable()) {
+            $this->addFlash('errorDiscountCode', 'Code de réduction expiré');
+            return $this->redirectToRoute('app_order_index', [], Response::HTTP_SEE_OTHER);
+        } elseif ($cart->getAppliedDiscount()) {
+            foreach ($cart->getOrderItems() as $item) {
+                $totalGlobalPrice += $item->getGlobalPrice();
+            }
+            $cart->setTotalPrice($totalGlobalPrice);
         }
 
-        return $this->render('order/edit.html.twig', [
-            'order' => $order,
-            'form' => $form,
-        ]);
-    }
+        $cart->setAppliedDiscount($verifiedDiscountCode);
+        $percentageDiscountCode = $verifiedDiscountCode->getPercentage();
+        $cart->setTotalPrice($cart->getTotalPrice() - ($cart->getTotalPrice() * $percentageDiscountCode / 100));
 
-    #[Route('/{id}', name: 'app_order_delete', methods: ['POST'])]
-    public function delete(Request $request, Order $order, EntityManagerInterface $entityManager): Response
-    {
-        if ($this->isCsrfTokenValid('delete'.$order->getId(), $request->getPayload()->getString('_token'))) {
-            $entityManager->remove($order);
-            $entityManager->flush();
-        }
+        $entityManager->flush();
 
         return $this->redirectToRoute('app_order_index', [], Response::HTTP_SEE_OTHER);
     }
+
+    #[Route('/cart/remove-discount', name: 'app_order_remove_discount', methods: ['GET'])]
+    public function deleteDiscountCode(OrderRepository $orderRepository, EntityManagerInterface $entityManager): Response
+    {
+        $cart = $orderRepository->findPendingOrderById($this->getUser());
+        if (!$cart->getAppliedDiscount()) {
+            return $this->redirectToRoute('app_order_index', [], Response::HTTP_SEE_OTHER);
+        }
+        $cart->setAppliedDiscount(null);
+
+        // update global price
+        $totalPrice = 0;
+        foreach ($cart->getOrderItems() as $item) {
+            $item->setGlobalPrice($item->getProduct()->getPrice() * $item->getQuantity());
+            $totalPrice += $item->getGlobalPrice();
+        }
+        $cart->setTotalPrice($totalPrice);
+        $entityManager->flush();
+
+        return $this->redirectToRoute('app_order_index', [], Response::HTTP_SEE_OTHER);
+    }
+
 }
