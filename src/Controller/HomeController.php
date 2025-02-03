@@ -43,15 +43,24 @@ class HomeController extends AbstractController
             throw $this->createAccessDeniedException('Vous devez être connecté en tant que client.');
         }
 
-        // Nombre d'articles par page
-        $limit = 6;
-        $page = max(1, (int)$request->query->get('page', 1));
+        $limit = 6; // Items per page
+        $page = max(1, (int) $request->query->get('page', 1));
         $offset = ($page - 1) * $limit;
 
-        $products = $wishlistRepository->findProductsByClientWithPagination($user, $limit, $offset);
+        [$wishlistItems, $totalProducts] = $wishlistRepository->findPaginatedByClient($user, $limit, $offset);
 
-        $totalProducts = $wishlistRepository->countProductsByClient($user);
+        // Process to get the minimum image URL for each product
+        $products = array_map(function ($wishlistItem) {
+            $product = $wishlistItem->getProduct();
+            $images = $product->getImageProducts();
 
+            return [
+                'id' => $product->getId(),
+                'name' => $product->getName(),
+                'price' => $product->getPrice(),
+                'image' => $images->isEmpty() ? null : $images->first()->getUrl(), // Assuming the first image is primary
+            ];
+        }, $wishlistItems);
 
         return $this->render('wishlist/index.html.twig', [
             'products' => $products,
@@ -59,6 +68,7 @@ class HomeController extends AbstractController
             'totalPages' => ceil($totalProducts / $limit),
         ]);
     }
+
 
     #[Route('/wishlist/{id}', name: 'wishlist_remove', methods: ['POST'])]
     public function removeFromWishlist(Request $request, Product $product, EntityManagerInterface $entityManager, WishlistRepository $wishlistRepository): Response
