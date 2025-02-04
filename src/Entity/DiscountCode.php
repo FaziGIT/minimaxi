@@ -28,7 +28,7 @@ class DiscountCode
     /**
      * @var Collection<int, Order>
      */
-    #[ORM\OneToMany(targetEntity: Order::class, mappedBy: 'appliedCoupon')]
+    #[ORM\OneToMany(targetEntity: Order::class, mappedBy: 'appliedDiscount')]
     private Collection $orders;
 
     public function __construct()
