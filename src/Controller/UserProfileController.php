@@ -13,9 +13,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
+#[Route('/profile')]
 class UserProfileController extends AbstractController
 {
-    #[Route('/profile', name: 'app_user_profile')]
+    #[Route('/', name: 'app_user_profile')]
     public function profile(OrderRepository $orderRepository, DiscountCodeRepository $discountCodeRepository): Response
     {
         $user = $this->getUser();
@@ -41,7 +42,7 @@ class UserProfileController extends AbstractController
         ]);
     }
 
-    #[Route('/profile/orders/{type}', name: 'app_user_orders')]
+    #[Route('/orders/{type}', name: 'app_user_orders')]
     public function viewAllOrders(string $type, OrderRepository $orderRepository, Request $request): Response
     {
         $user = $this->getUser();
@@ -77,7 +78,7 @@ class UserProfileController extends AbstractController
     }
 
 
-    #[Route('/profile/edit', name: 'app_profile_edit')]
+    #[Route('/edit', name: 'app_profile_edit')]
     public function editProfile(Request $request, EntityManagerInterface $entityManager): Response
     {
         $user = $this->getUser();
