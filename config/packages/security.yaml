@@ -46,6 +46,7 @@ security:
     - { path: ^/admin, roles: ROLE_ADMIN }
     - { path: ^/cart, roles: IS_AUTHENTICATED_FULLY }
     - { path: ^/wishlist, roles: PUBLIC_ACCESS, allow_if: "not is_granted('ROLE_ADMIN')" }
+    - { path: ^/cart, roles: PUBLIC_ACCESS, allow_if: "not is_granted('ROLE_ADMIN')" }
   # - { path: ^/profile, roles: ROLE_USER }
 
 when@test:
