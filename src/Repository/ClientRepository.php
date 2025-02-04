@@ -40,4 +40,12 @@ class ClientRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+    function findAllClient()
+    {
+        return $this->createQueryBuilder('c')
+            ->select('c', 'r')
+            ->leftJoin('c.reviews', 'r')
+            ->getQuery()
+            ->getResult();
+    }
 }
