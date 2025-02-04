@@ -44,14 +44,6 @@ final class DiscountCodeController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_discount_code_show', methods: ['GET'])]
-    public function show(DiscountCode $discountCode): Response
-    {
-        return $this->render('discount_code/show.html.twig', [
-            'discount_code' => $discountCode,
-        ]);
-    }
-
     #[Route('/{id}/edit', name: 'app_discount_code_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, DiscountCode $discountCode, EntityManagerInterface $entityManager): Response
     {
