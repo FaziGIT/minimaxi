@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Admin;
 
 use App\Entity\DiscountCode;
 use App\Form\DiscountCodeType;
@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/discount/code')]
+#[Route('/admin/discount-code')]
 final class DiscountCodeController extends AbstractController
 {
     #[Route(name: 'app_discount_code_index', methods: ['GET'])]
@@ -30,6 +30,8 @@ final class DiscountCodeController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $uppercase = \strtoupper($discountCode->getCode());
+            $discountCode->setCode($uppercase);
             $entityManager->persist($discountCode);
             $entityManager->flush();
 
@@ -71,7 +73,22 @@ final class DiscountCodeController extends AbstractController
     #[Route('/{id}', name: 'app_discount_code_delete', methods: ['POST'])]
     public function delete(Request $request, DiscountCode $discountCode, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$discountCode->getId(), $request->getPayload()->getString('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $discountCode->getId(), $request->getPayload()->getString('_token'))) {
+            //delete all the orders linked to the discount code
+            foreach ($discountCode->getOrders() as $order) {
+                $order->setAppliedDiscount(null);
+            }
+
+            // update the global price
+            foreach ($discountCode->getOrders() as $order) {
+                $totalPrice = 0;
+                foreach ($order->getOrderItems() as $item) {
+                    $item->setGlobalPrice($item->getProduct()->getPrice() * $item->getQuantity());
+                    $totalPrice += $item->getGlobalPrice();
+                }
+                $order->setTotalPrice($totalPrice);
+            }
+
             $entityManager->remove($discountCode);
             $entityManager->flush();
         }
