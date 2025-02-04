@@ -13,7 +13,7 @@
             <div class="flex items-center space-x-4">
                 <div class="w-24 h-24">
                     {% if user.avatar %}
-                        <img src="{{ asset(user.avatar) }}" alt="Avatar de {{ user.email }}" class="w-full h-full object-cover">
+                        <img src="{{ asset(user.avatar) }}" alt="Avatar de {{ user.email }}" class="w-full h-full object-cover rounded-full">
                     {% endif %}
                 </div>
                 <div>

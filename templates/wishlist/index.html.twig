@@ -28,36 +28,38 @@
                     </div>
                 {% endfor %}
             {% else %}
-                <p class="text-gray-500">Votre wishlist est vide.</p>
+                <p class="text-gray-500">Votre liste de souhaits est vide.</p>
             {% endif %}
         </div>
 
         <!-- Pagination -->
-        <div class="flex justify-center mt-6">
-            <div class="flex items-center space-x-2">
-                {% if currentPage > 1 %}
-                    <a href="{{ path('wishlist', { page: currentPage - 1 }) }}" class="px-4 py-2 bg-gray-200 hover:bg-gray-400 rounded-md flex items-center justify-center">
-                        <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#000000">
-                            <path d="M15 6L9 12L15 18M15 12H15.01" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
-                        </svg>
-                    </a>
-                {% endif %}
-
-                {% for i in 1..totalPages %}
-                    {% if totalPages != 1 %}
-                        <a href="{{ path('wishlist', { page: i }) }}" class="px-4 py-2 {{ i == currentPage ? 'bg-black text-white' : 'bg-gray-200 hover:bg-gray-400' }} rounded-md flex items-center justify-center">
-                            {{ i }}
+        {% if products|length > 0 %}
+            <div class="flex justify-center mt-6">
+                <div class="flex items-center space-x-2">
+                    {% if currentPage > 1 %}
+                        <a href="{{ path('wishlist', { page: currentPage - 1 }) }}" class="px-4 py-2 bg-gray-200 hover:bg-gray-400 rounded-md flex items-center justify-center">
+                            <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#000000">
+                                <path d="M15 6L9 12L15 18M15 12H15.01" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                            </svg>
                         </a>
                     {% endif %}
-                {% endfor %}
 
-                {% if currentPage < totalPages %}
-                    <a href="{{ path('wishlist', { page: currentPage + 1 }) }}" class="px-4 py-2 bg-gray-200 hover:bg-gray-400 rounded-md flex items-center justify-center">
-                        <svg class="h-6 w-6 text-gray-600" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 6L15 12L9 18M9 12H9.01" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
-                    </a>
-                {% endif %}
+                    {% for i in 1..totalPages %}
+                        {% if totalPages != 1 %}
+                            <a href="{{ path('wishlist', { page: i }) }}" class="px-4 py-2 {{ i == currentPage ? 'bg-black text-white' : 'bg-gray-200 hover:bg-gray-400' }} rounded-md flex items-center justify-center">
+                                {{ i }}
+                            </a>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if currentPage < totalPages %}
+                        <a href="{{ path('wishlist', { page: currentPage + 1 }) }}" class="px-4 py-2 bg-gray-200 hover:bg-gray-400 rounded-md flex items-center justify-center">
+                            <svg class="h-6 w-6 text-gray-600" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 6L15 12L9 18M9 12H9.01" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                        </a>
+                    {% endif %}
+                </div>
             </div>
-        </div>
+        {% endif %}
     </div>
 
 {% endblock %}

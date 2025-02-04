@@ -1,83 +1,86 @@
-{% extends 'baseWithoutNavbar.html.twig' %}
+{% extends 'base.html.twig' %}
 
 {% block title %}Me connecter{% endblock %}
 
 {% block body %}
-    <div class="flex flex-col lg:flex-row rounded-lg overflow-hidden w-full min-h-screen items-stretch">
-        <!-- Image Section -->
-        <div class="hidden lg:block w-1/2 h-screen">
-            <img src="{{ asset('img/login/doubleChair.jpg') }}"
-                 alt="Leaf"
-                 class="w-full h-full object-cover rounded-r-xl">
-        </div>
-
-        <!-- Form Section -->
-        <div class="w-full lg:w-1/2 p-8 sm:p-20 lg:p-40 flex flex-col justify-center my-auto">
-            <h1 class="text-2xl font-bold mb-6">Se connecter</h1>
-
-            {% if error %}
-                <div class="alert alert-danger"></div>
-                <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50"
-                     role="alert">
-                    <span class="font-medium">{{ error.messageKey|trans(error.messageData, 'security') }}</span>
-                </div>
-            {% endif %}
-
-            <form method="POST" class="space-y-4">
-                <div>
-                    <label for="email" class="block text-sm font-medium text-gray-700">Adresse email *</label>
-                    <input type="email" value="{{ last_username }}" name="_username" id="username"
-                           class="mt-1 block w-full border border-gray-300 rounded-xl shadow-sm p-2 focus:ring-green-500 focus:border-green-500"
-                           autocomplete="email" required autofocus>
+    <div class="flex items-center justify-center min-h-[calc(100vh-80px)]">
+        <div class="bg-white rounded-lg shadow-md w-full max-w-3xl lg:max-w-4xl">
+            <!-- Conteneur avec paddings et ajustements -->
+            <div class="flex flex-col lg:flex-row">
+                <!-- Image Section -->
+                <div class="hidden lg:block w-1/2">
+                    <img src="{{ asset('img/login/doubleChair.jpg') }}"
+                         alt="Chaises"
+                         class="w-full h-full object-cover rounded-l-lg">
                 </div>
 
-                <div>
-                    <label for="password" class="block text-sm font-medium text-gray-700">Mot de passe *</label>
-                    <input type="password" name="_password" id="password"
-                           class="mt-1 block w-full border border-gray-300 rounded-xl shadow-sm p-2 focus:ring-green-500 focus:border-green-500"
-                           autocomplete="current-password" required>
+                <!-- Form Section -->
+                <div class="w-full lg:w-1/2 p-8 sm:p-12 flex flex-col justify-center">
+                    <h1 class="text-2xl font-bold mb-6 text-center">Se connecter</h1>
+
+                    {% if error %}
+                        <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50"
+                             role="alert">
+                            <span class="font-medium">{{ error.messageKey|trans(error.messageData, 'security') }}</span>
+                        </div>
+                    {% endif %}
+
+                    <form method="POST" class="space-y-4">
+                        <div>
+                            <label for="email" class="block text-sm font-medium text-gray-700">Adresse email *</label>
+                            <input type="email" value="{{ last_username }}" name="_username" id="username"
+                                   class="mt-1 block w-full border border-gray-300 rounded-xl shadow-sm p-2 focus:ring-green-500 focus:border-green-500"
+                                   autocomplete="email" required autofocus>
+                        </div>
+
+                        <div>
+                            <label for="password" class="block text-sm font-medium text-gray-700">Mot de passe *</label>
+                            <input type="password" name="_password" id="password"
+                                   class="mt-1 block w-full border border-gray-300 rounded-xl shadow-sm p-2 focus:ring-green-500 focus:border-green-500"
+                                   autocomplete="current-password" required>
+                        </div>
+
+                        <input type="hidden" name="_csrf_token"
+                               value="{{ csrf_token('authenticate') }}"
+                        >
+
+                        <div class="flex items-center">
+                            <input id="_remember_me" name="_remember_me" type="checkbox"
+                                   class="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded">
+                            <label for="_remember_me" class="ml-2 block text-sm text-gray-600">
+                                Se souvenir de moi
+                            </label>
+                        </div>
+
+                        <button type="submit"
+                                class="w-full bg-green-600 text-white font-medium py-2 rounded-md shadow-sm hover:bg-green-700">
+                            Se connecter
+                        </button>
+                    </form>
+
+                    <div class="mt-6 flex items-center justify-center">
+                        <div class="border-t border-gray-300 w-full"></div>
+                        <span class="px-4 text-sm text-gray-500">ou</span>
+                        <div class="border-t border-gray-300 w-full"></div>
+                    </div>
+
+                    <div class="mt-4 flex justify-center space-x-4">
+                        <a href="{{ path('connect_google') }}"
+                           class="flex items-center px-4 py-2 border rounded-md shadow-sm text-gray-700 font-medium hover:bg-gray-50">
+                            <img src="https://img.icons8.com/color/24/google-logo.png" alt="Google Logo" class="mr-2">
+                            Se connecter avec Google
+                        </a>
+                    </div>
+
+                    <p class="mt-6 text-sm text-center text-gray-600">
+                        Vous n'avez pas de compte ? <a href="{{ path('app_register') }}" class="text-green-500 underline">S'inscrire</a>
+                    </p>
+
+                    <p class="mt-6 text-sm text-center text-gray-600">
+                        <a href="{{ path('app_forgot_password_request') }}" class="text-green-500 underline">Mot de passe oublié ?</a>
+                    </p>
                 </div>
-
-                <input type="hidden" name="_csrf_token"
-                       value="{{ csrf_token('authenticate') }}"
-                >
-
-                <div class="flex items-center">
-                    <input id="_remember_me" name="_remember_me" type="checkbox"
-                           class="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded">
-                    <label for="_remember_me" class="ml-2 block text-sm text-gray-600">
-                        Se souvenir de moi
-                    </label>
-                </div>
-
-                <button type="submit"
-                        class="w-full bg-green-600 text-white font-medium py-2 rounded-md shadow-sm hover:bg-green-700">
-                    Se connecter
-                </button>
-            </form>
-
-            <div class="mt-6 flex items-center justify-center">
-                <div class="border-t border-gray-300 w-full"></div>
-                <span class="px-4 text-sm text-gray-500">ou</span>
-                <div class="border-t border-gray-300 w-full"></div>
             </div>
-
-            <div class="mt-4 flex justify-center space-x-4">
-                <a href="{{ path('connect_google') }}"
-                   class="flex items-center px-4 py-2 border rounded-md shadow-sm text-gray-700 font-medium hover:bg-gray-50">
-                    <img src="https://img.icons8.com/color/24/google-logo.png" alt="Google Logo" class="mr-2">
-                    Se connecter avec Google
-                </a>
-            </div>
-
-            <p class="mt-6 text-sm text-center text-gray-600">
-                Vous n'avez pas de compte ? <a href="{{ path('app_register') }}" class="text-green-500 underline">S'inscrire</a>
-            </p>
-
-            <p class="mt-6 text-sm text-center text-gray-600">
-                <a href="{{ path('app_forgot_password_request') }}" class="text-green underline">Mot de passe oublié
-                    ?</a>
-            </p>
         </div>
     </div>
 {% endblock %}

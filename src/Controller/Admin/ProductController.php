@@ -6,6 +6,7 @@ use App\Entity\Product;
 use App\Enum\SizeProductEnum;
 use App\Form\ProductType;
 use App\Repository\CategoryRepository;
+use App\Repository\ProductRepository;
 use App\Service\createImgFromProductForm;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
@@ -19,6 +20,14 @@ final class ProductController extends AbstractController
 {
     public function __construct(private createImgFromProductForm $createImgFromProductForm)
     {
+    }
+
+    #[Route(name: 'app_admin_product', methods: ['GET'])]
+    public function index(ProductRepository $productRepository): Response
+    {
+        return $this->render('product/index.html.twig', [
+            'products' => $productRepository->findAll(),
+        ]);
     }
 
     #[Route('/new', name: 'app_admin_newproduct')]
