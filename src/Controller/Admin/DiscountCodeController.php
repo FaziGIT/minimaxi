@@ -33,7 +33,6 @@ final class DiscountCodeController extends AbstractController
             $uppercase = \strtoupper($discountCode->getCode());
             $discountCode->setCode($uppercase);
 
-            // TODO: Faire en sorte que si cest +100 ca remette a 100
             if ($discountCode->getPercentage() > 100) {
                 $discountCode->setPercentage(100);
             }
@@ -57,7 +56,7 @@ final class DiscountCodeController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // TODO: Faire en sorte que si cest +100 ca remette a 100
+
             if ($discountCode->getPercentage() > 100) {
                 $discountCode->setPercentage(100);
             }
