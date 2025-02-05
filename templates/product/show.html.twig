@@ -138,12 +138,12 @@
                         <p class="text-gray-500 mb-2"></p>
                         <footer class="flex justify-between items-center mb-2">
                             <div class="flex items-center">
-                                <p class="inline-flex items-center mr-3 text-sm text-gray-900 font-semibold"><img
-                                            class="mr-2 w-6 h-6 rounded-full" src={{ review.client.avatar }} alt="Bonnie
-                                            Green">{{ review.client.email }}</p>
+                                <p class="inline-flex items-center mr-3 text-sm text-gray-900 font-semibold">
+                                    <img class="mr-2 w-6 h-6 rounded-full" src="{{ review.client.avatar }}"
+                                         alt="image">{{ review.client.email }}
+                                </p>
                                 <p class="text-sm text-gray-600">
-                                    <time pubdate
-                                          datetime="{{ review.createdAt|date('Y-m-d') }}">{{ review.createdAt|date('F j, Y') }}</time>
+                                    <time datetime="{{ review.createdAt|date('Y-m-d') }}">{{ review.createdAt|date('F j, Y') }}</time>
                                 </p>
                             </div>
 
