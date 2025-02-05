@@ -38,7 +38,6 @@ final class ProductController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
             // recuperer l'image
             $this->createImgFromProductForm->createImage($product, $form, $entityManager);
 

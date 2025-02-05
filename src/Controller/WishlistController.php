@@ -105,5 +105,4 @@ class WishlistController extends AbstractController
 
         return $this->redirectToRoute('wishlist', ['page' => $currentPage]);
     }
-
 }

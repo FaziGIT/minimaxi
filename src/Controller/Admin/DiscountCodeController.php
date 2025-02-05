@@ -56,7 +56,6 @@ final class DiscountCodeController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
             if ($discountCode->getPercentage() > 100) {
                 $discountCode->setPercentage(100);
             }

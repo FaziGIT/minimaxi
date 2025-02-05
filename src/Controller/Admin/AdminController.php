@@ -59,5 +59,4 @@ class AdminController extends AbstractController
 
         return $this->redirectToRoute('app_admin_show_users');
     }
-
 }

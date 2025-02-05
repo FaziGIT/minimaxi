@@ -54,5 +54,4 @@ class ClientTest extends KernelTestCase
     {
         $this->assertHasErrors($this->getEntity()->setPhoneNumber(''));
     }
-
 }

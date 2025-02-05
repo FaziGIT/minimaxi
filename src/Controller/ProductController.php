@@ -49,7 +49,6 @@ final class ProductController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
             if ($review->getRating() > 5) {
                 $review->setRating(5);
             }

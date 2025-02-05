@@ -78,7 +78,6 @@ class ProductType extends AbstractType
                     'label' => false  // Ceci cachera les labels de chaque élément
                 ],
             ]);
-
     }
 
     public function configureOptions(OptionsResolver $resolver): void
