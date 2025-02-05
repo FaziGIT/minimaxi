@@ -5,128 +5,149 @@
 
 {% block body %}
 
-	<div class="py-8">
-		<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-			<div class="flex flex-col md:flex-row -mx-4">
-				<div class="md:flex-1 px-4">
-					<div class="h-[460px] rounded-lg bg-gray-300 mb-4">
-						<img class="w-full h-full object-cover" src="https://cdn.pixabay.com/photo/2020/05/22/17/53/mockup-5206355_960_720.jpg" alt="Product Image">
-					</div>
-				</div>
-				<div class="md:flex-1 flex flex-col justify-between px-4 pb-4">
-					<div>
-						<h2 class="text-2xl font-bold text-gray-800 mb-2">{{ product.name }}</h2>
-						<div class="mb-4">
-							<span class="font-bold text-gray-700">Category:</span>
-							<span class="text-gray-600">{{ product.category.name }}</span>
-						</div>
-						<div class="mb-4">
-							<span class="font-bold text-gray-700">Description:</span>
-							<p class="text-gray-600 text-sm mt-2">
-								{{ product.description }}
-							</p>
-						</div>
-						<div class="mb-4">
-							<span class="font-bold text-gray-700">Taille:</span>
-							<span class="text-gray-600 text-sm mt-2">
+    <div class="py-8">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row -mx-4">
+                <div class="md:flex-1 px-4">
+                    <div class="h-[460px] rounded-lg bg-gray-300 mb-4">
+                        <img class="w-full h-full object-cover"
+                             src="https://cdn.pixabay.com/photo/2020/05/22/17/53/mockup-5206355_960_720.jpg"
+                             alt="Product Image">
+                    </div>
+                </div>
+                <div class="md:flex-1 flex flex-col justify-between px-4 pb-4">
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-800 mb-2">{{ product.name }}</h2>
+                        <div class="mb-4">
+                            <span class="font-bold text-gray-700">Category:</span>
+                            <span class="text-gray-600">{{ product.category.name }}</span>
+                        </div>
+                        <div class="mb-4">
+                            <span class="font-bold text-gray-700">Description:</span>
+                            <p class="text-gray-600 text-sm mt-2">
+                                {{ product.description }}
+                            </p>
+                        </div>
+                        <div class="mb-4">
+                            <span class="font-bold text-gray-700">Taille:</span>
+                            <span class="text-gray-600 text-sm mt-2">
 								{{ product.size.value }}</span>
-						</div>
-						<div class="mb-4">
-							<span class="font-bold text-gray-700">Stocks:</span>
-							<span class="text-gray-600">{{ product.stockQuantity }}
-								produits manquant</span>
-						</div>
-						<div>
-							<span class="font-bold text-gray-700">Prix:</span>
-							<span class="text-gray-600">{{ product.price }}€</span>
-						</div>
-					</div>
-					<div class="flex gap-4">
-						<button class="inline-block mt-4 px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-700">Add to Cart</button>
-						<button class="inline-block mt-4 px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-700">Add to Wishlist</button>
-					</div>
-				</div>
-			</div>
-		</div>
+                        </div>
+                        <div>
+                            <span class="font-bold text-gray-700">Prix:</span>
+                            <span class="text-gray-600">{{ product.price }}€</span>
+                        </div>
+                    </div>
+                    <div class="flex gap-4">
+                        <a href="{{ path('app_order_add_to_cart', {'id': product.id}) }}"
+                           class="inline-block mt-4 px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-700">Ajouter
+                            au panier</a>
+                        <a class="inline-block mt-4 px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-700">
+                            Ajouter à la liste de souhait
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-		<hr class="my-4">
+        <hr class="my-4">
 
-		<section class="py-8 lg:py-16 antialiased">
-			<div class="max-w-2xl mx-auto px-4">
-				<div class="flex justify-between items-center mb-6">
-					<h2 class="text-lg lg:text-2xl font-bold text-gray-900">Commentaires ({{ reviews|length}})</h2>
-				</div>
-				{% if app.user and reviews|filter(review => review.client.id == app.user.id)  %}
-					<form class="mb-6">
-						<div class="py-2 px-4 mb-4 bg-white rounded-lg rounded-t-lg border border-gray-200">
-							<label for="comment" class="sr-only">Your comment</label>
-							<textarea id="comment" rows="6" class="px-0 w-full text-sm text-gray-900 border-0 focus:ring-0 focus:outline-none" placeholder="Write a comment..." required></textarea>
-						</div>
-						<button type="submit" class="inline-block mt-4 px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-700">
-							Post comment
-						</button>
-					</form>
-				{% endif %}
+        <section class="py-8 lg:py-16 antialiased">
+            <div class="max-w-2xl mx-auto px-4">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-lg lg:text-2xl font-bold text-gray-900">Commentaires ({{ reviews|length }})</h2>
+                </div>
+                {% if app.user and reviews|filter(review => review.client.id == app.user.id) %}
+                    <form class="mb-6">
+                        <div class="py-2 px-4 mb-4 bg-white rounded-lg rounded-t-lg border border-gray-200">
+                            <label for="comment" class="sr-only">Your comment</label>
+                            <textarea id="comment" rows="6"
+                                      class="px-0 w-full text-sm text-gray-900 border-0 focus:ring-0 focus:outline-none"
+                                      placeholder="Write a comment..." required></textarea>
+                        </div>
+                        <button type="submit"
+                                class="inline-block mt-4 px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-700">
+                            Post comment
+                        </button>
+                    </form>
+                {% endif %}
 
-				{% for review in reviews %}
+                {% for review in reviews %}
 
-					<article class="p-6 mb-3 text-base border-t border-gray-200">
-						<div class="flex items-center mb-4">
-							{% for i in 1..5%}
+                    <article class="p-6 mb-3 text-base border-t border-gray-200">
+                        <div class="flex items-center mb-4">
+                            {% for i in 1..5 %}
 
-								{% if i <= review.rating %}
-									<svg class="mr-1.5 w-6 h-6" version="1.0" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewbox="0 0 64 64" enable-background="new 0 0 64 64" xml:space="preserve" fill="#000000">
+                                {% if i <= review.rating %}
+                                    <svg class="mr-1.5 w-6 h-6" version="1.0" id="Layer_1"
+                                         xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                                         viewbox="0 0 64 64" enable-background="new 0 0 64 64" xml:space="preserve"
+                                         fill="#000000">
 										<g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-										<g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
-										<g id="SVGRepo_iconCarrier">
-											<path fill="#f4e42f" d="M63.893,24.277c-0.238-0.711-0.854-1.229-1.595-1.343l-19.674-3.006L33.809,1.15 C33.479,0.448,32.773,0,31.998,0s-1.48,0.448-1.811,1.15l-8.815,18.778L1.698,22.935c-0.741,0.113-1.356,0.632-1.595,1.343 c-0.238,0.71-0.059,1.494,0.465,2.031l14.294,14.657L11.484,61.67c-0.124,0.756,0.195,1.517,0.822,1.957 c0.344,0.243,0.747,0.366,1.151,0.366c0.332,0,0.666-0.084,0.968-0.25l17.572-9.719l17.572,9.719c0.302,0.166,0.636,0.25,0.968,0.25 c0.404,0,0.808-0.123,1.151-0.366c0.627-0.44,0.946-1.201,0.822-1.957l-3.378-20.704l14.294-14.657 C63.951,25.771,64.131,24.987,63.893,24.277z"></path>
-										</g>
+                                        <g id="SVGRepo_tracerCarrier" stroke-linecap="round"
+                                           stroke-linejoin="round"></g>
+                                        <g id="SVGRepo_iconCarrier">
+                                            <path fill="#f4e42f"
+                                                  d="M63.893,24.277c-0.238-0.711-0.854-1.229-1.595-1.343l-19.674-3.006L33.809,1.15 C33.479,0.448,32.773,0,31.998,0s-1.48,0.448-1.811,1.15l-8.815,18.778L1.698,22.935c-0.741,0.113-1.356,0.632-1.595,1.343 c-0.238,0.71-0.059,1.494,0.465,2.031l14.294,14.657L11.484,61.67c-0.124,0.756,0.195,1.517,0.822,1.957 c0.344,0.243,0.747,0.366,1.151,0.366c0.332,0,0.666-0.084,0.968-0.25l17.572-9.719l17.572,9.719c0.302,0.166,0.636,0.25,0.968,0.25 c0.404,0,0.808-0.123,1.151-0.366c0.627-0.44,0.946-1.201,0.822-1.957l-3.378-20.704l14.294-14.657 C63.951,25.771,64.131,24.987,63.893,24.277z"></path>
+                                        </g>
 									</svg>
-								{% else %}
-									<svg class="mr-1.5 w-6 h-6" version="1.0" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewbox="0 0 64 64" enable-background="new 0 0 64 64" xml:space="preserve" fill="#000000">
+                                {% else %}
+                                    <svg class="mr-1.5 w-6 h-6" version="1.0" id="Layer_1"
+                                         xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                                         viewbox="0 0 64 64" enable-background="new 0 0 64 64" xml:space="preserve"
+                                         fill="#000000">
 										<g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-										<g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
-										<g id="SVGRepo_iconCarrier">
-											<path fill="#f4e42f" d="M32.001,2.484c0.279,0,0.463,0.509,0.463,0.509l8.806,18.759l20.729,3.167L47,40.299L50.541,62 l-18.54-10.254L13.461,62l3.541-21.701L2.003,24.919l20.729-3.167L31.53,3.009C31.53,3.009,31.722,2.484,32.001,2.484 M32.001,0.007 c-0.775,0-1.48,0.448-1.811,1.15l-8.815,18.778L1.701,22.941c-0.741,0.113-1.356,0.632-1.595,1.343 c-0.238,0.71-0.059,1.494,0.465,2.031l14.294,14.657l-3.378,20.704c-0.124,0.756,0.195,1.517,0.822,1.957 C12.653,63.877,13.057,64,13.461,64c0.332,0,0.666-0.084,0.968-0.25l17.572-9.719l17.572,9.719c0.302,0.166,0.636,0.25,0.968,0.25 c0.404,0,0.808-0.123,1.151-0.366c0.627-0.44,0.946-1.201,0.822-1.957l-3.378-20.704l14.294-14.657 c0.523-0.537,0.703-1.321,0.465-2.031c-0.238-0.711-0.854-1.229-1.595-1.343l-19.674-3.006L33.812,1.157 C33.481,0.455,32.776,0.007,32.001,0.007L32.001,0.007z"></path>
-										</g>
+                                        <g id="SVGRepo_tracerCarrier" stroke-linecap="round"
+                                           stroke-linejoin="round"></g>
+                                        <g id="SVGRepo_iconCarrier">
+                                            <path fill="#f4e42f"
+                                                  d="M32.001,2.484c0.279,0,0.463,0.509,0.463,0.509l8.806,18.759l20.729,3.167L47,40.299L50.541,62 l-18.54-10.254L13.461,62l3.541-21.701L2.003,24.919l20.729-3.167L31.53,3.009C31.53,3.009,31.722,2.484,32.001,2.484 M32.001,0.007 c-0.775,0-1.48,0.448-1.811,1.15l-8.815,18.778L1.701,22.941c-0.741,0.113-1.356,0.632-1.595,1.343 c-0.238,0.71-0.059,1.494,0.465,2.031l14.294,14.657l-3.378,20.704c-0.124,0.756,0.195,1.517,0.822,1.957 C12.653,63.877,13.057,64,13.461,64c0.332,0,0.666-0.084,0.968-0.25l17.572-9.719l17.572,9.719c0.302,0.166,0.636,0.25,0.968,0.25 c0.404,0,0.808-0.123,1.151-0.366c0.627-0.44,0.946-1.201,0.822-1.957l-3.378-20.704l14.294-14.657 c0.523-0.537,0.703-1.321,0.465-2.031c-0.238-0.711-0.854-1.229-1.595-1.343l-19.674-3.006L33.812,1.157 C33.481,0.455,32.776,0.007,32.001,0.007L32.001,0.007z"></path>
+                                        </g>
 									</svg>
-								{% endif %}
-							{% endfor %}
-						</div>
-						<p class="text-gray-500 mb-2"></p>
-						<footer class="flex justify-between items-center mb-2">
-							<div class="flex items-center">
-								<p class="inline-flex items-center mr-3 text-sm text-gray-900 font-semibold"><img class="mr-2 w-6 h-6 rounded-full" src={{review.client.avatar}} alt="Bonnie Green">{{ review.client.email }}</p>
-								<p class="text-sm text-gray-600">
-									<time pubdate datetime="{{ review.createdAt|date('Y-m-d') }}">{{ review.createdAt|date('F j, Y') }}</time>
-								</p>
-							</div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        <p class="text-gray-500 mb-2"></p>
+                        <footer class="flex justify-between items-center mb-2">
+                            <div class="flex items-center">
+                                <p class="inline-flex items-center mr-3 text-sm text-gray-900 font-semibold"><img
+                                            class="mr-2 w-6 h-6 rounded-full" src={{ review.client.avatar }} alt="Bonnie
+                                            Green">{{ review.client.email }}</p>
+                                <p class="text-sm text-gray-600">
+                                    <time pubdate
+                                          datetime="{{ review.createdAt|date('Y-m-d') }}">{{ review.createdAt|date('F j, Y') }}</time>
+                                </p>
+                            </div>
 
-							{% if app.user and app.user.id == review.client.id %}
+                            {% if app.user and app.user.id == review.client.id %}
 
-								<button id="dropdownComment3Button" data-dropdown-toggle="dropdownComment3" class="inline-flex items-center p-2 text-sm font-medium text-center text-gray-500 rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-50" type="button">
-									{{ include('review/_delete_form.html.twig') }}
-								</button>
-							{% endif %}
+                                <button id="dropdownComment3Button" data-dropdown-toggle="dropdownComment3"
+                                        class="inline-flex items-center p-2 text-sm font-medium text-center text-gray-500 rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-50"
+                                        type="button">
+                                    {{ include('review/_delete_form.html.twig') }}
+                                </button>
+                            {% endif %}
 
-						</footer>
-						<p class="text-gray-500">{{ review.content }}</p>
-						<div class="flex items-center mt-4 space-x-4">
-							<button type="button" class="flex items-center text-sm text-gray-500 hover:underline dark:text-gray-400 font-medium">
-								<svg class="mr-1.5 w-3.5 h-3.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewbox="0 0 20 18">
-									<path d="M17.947 2.053a5.209 5.209 0 0 0-3.793-1.53A6.414 6.414 0 0 0 10 2.311 6.482 6.482 0 0 0 5.824.5a5.2 5.2 0 0 0-3.8 1.521c-1.915 1.916-2.315 5.392.625 8.333l7 7a.5.5 0 0 0 .708 0l7-7a6.6 6.6 0 0 0 2.123-4.508 5.179 5.179 0 0 0-1.533-3.793Z"></path>
-								</svg>
-								{{ review.likes|length }}
-							</button>
-						</div>
-					</article>
+                        </footer>
+                        <p class="text-gray-500">{{ review.content }}</p>
+                        <div class="flex items-center mt-4 space-x-4">
+                            <button type="button"
+                                    class="flex items-center text-sm text-gray-500 hover:underline dark:text-gray-400 font-medium">
+                                <svg class="mr-1.5 w-3.5 h-3.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                                     fill="currentColor" viewbox="0 0 20 18">
+                                    <path d="M17.947 2.053a5.209 5.209 0 0 0-3.793-1.53A6.414 6.414 0 0 0 10 2.311 6.482 6.482 0 0 0 5.824.5a5.2 5.2 0 0 0-3.8 1.521c-1.915 1.916-2.315 5.392.625 8.333l7 7a.5.5 0 0 0 .708 0l7-7a6.6 6.6 0 0 0 2.123-4.508 5.179 5.179 0 0 0-1.533-3.793Z"></path>
+                                </svg>
+                                {{ review.likes|length }}
+                            </button>
+                        </div>
+                    </article>
 
-				{% endfor %}
+                {% endfor %}
 
-			</div>
-		</section>
+            </div>
+        </section>
 
-	</div>
+    </div>
 
 
 {% endblock %}
