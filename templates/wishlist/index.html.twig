@@ -18,7 +18,7 @@
                         'isHome': true,
                         'pathRemoveWishlist': path('wishlist_remove', { id: product.id, page: currentPage }),
                         'removeWishlistToken': csrf_token('remove_wishlist' ~ product.id),
-                        'isConnected': app.user ? true : false
+                        'isConnected': app.user ? true : false,
                         'pathAddCart': path('app_order_add_to_cart', { 'id': product.id })
                     })}}></div>
                 {% endfor %}
