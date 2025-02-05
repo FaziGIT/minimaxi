@@ -18,6 +18,7 @@
             :wishlist="false"
             :path="`${props.productPath.replace('ID_PLACEHOLDER',`${product.id}`)}`"
             :isHome="false"
+            :isConnected="props.isConnected"
         />
     </div>
 </template>
@@ -28,7 +29,8 @@ import ProductComponent from './ProductComponent.vue';
 
 const props = defineProps({
     products: Array,
-    productPath: String
+    productPath: String,
+    isConnected: Boolean
 });
 
 console.log(props.productPath);

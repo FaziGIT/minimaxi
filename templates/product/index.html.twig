@@ -3,5 +3,5 @@
 {% block title %}Product index{% endblock %}
 
 {% block body %}
-    <div {{ vue_component('Products', { 'products': products, 'productPath': path('app_product_show', { 'id': 'ID_PLACEHOLDER' }) })}}></div>
+    <div {{ vue_component('Products', { 'products': products, 'productPath': path('app_product_show', { 'id': 'ID_PLACEHOLDER' }), 'isConnected': app.user ? true : false })}}></div>
 {% endblock %}

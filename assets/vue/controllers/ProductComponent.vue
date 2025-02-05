@@ -5,7 +5,7 @@
         <h3 class="text-gray-800 font-bold mt-4">{{ name }}</h3>
         <div class="flex justify-between items-center mt-2">
             <p class="text-gray-600">{{ price }} €</p>
-            <div class="flex items-center gap-2 z-10">
+            <div v-if="isConnected" class="flex items-center gap-2 z-10">
                 <form v-if="wishlist" :action="pathRemoveWishlist" method="POST">
                     <input type="hidden" name="_token" :value="removeWishlistToken">
                     <button type="submit">
@@ -31,6 +31,7 @@ defineProps({
     wishlist: Boolean,
     path: String,
     isHome: Boolean,
+    isConnected: Boolean,
     pathRemoveWishlist: String,
     removeWishlistToken: String
 });
