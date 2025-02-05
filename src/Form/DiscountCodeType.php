@@ -29,8 +29,7 @@ class DiscountCodeType extends AbstractType
                     new PositiveOrZero(message: 'Le pourcentage doit être un nombre positif ou nul'),
                 ],
             ])
-            ->add('validUntil', DateType::class, [
-            ]);
+            ->add('validUntil', DateType::class);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
