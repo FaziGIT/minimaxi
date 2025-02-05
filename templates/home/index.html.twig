@@ -35,7 +35,9 @@
                         'wishlist': false,
                         'path': path('app_product_show', { 'id': product.id }),
                         'isHome': true,
-                        'isConnected': app.user ? true : false
+                        'isConnected': app.user ? true : false,
+                        'pathAddWishlist': path('wishlist_add', { 'id': product.id }),
+                        'pathAddCart': path('app_order_add_to_cart', { 'id': product.id })
                     }) }}></div>
 
                 {% else %}
@@ -65,7 +67,9 @@
                         'wishlist': false,
                         'path': path('app_product_show', { 'id': topProduct.id }),
                         'isHome': true,
-                        'isConnedted': app.user ? true : false
+                        'isConnected': app.user ? true : false,
+                        'pathAddWishlist': path('wishlist_add', { 'id': topProduct.id }),
+                        'pathAddCart': path('app_order_add_to_cart', { 'id': topProduct.id })
                     }) }}></div>
                 {% else %}
                     <p class="text-center text-gray-500">Pas de produits trouvés</p>

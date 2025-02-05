@@ -19,6 +19,8 @@
             :path="`${props.productPath.replace('ID_PLACEHOLDER',`${product.id}`)}`"
             :isHome="false"
             :isConnected="props.isConnected"
+            :pathAddWishlist="`${props.pathAddWishlist.replace('ID_PLACEHOLDER',`${product.id}`)}`"
+            :pathAddCart="`${props.pathAddCart.replace('ID_PLACEHOLDER',`${product.id}`)}`"
         />
     </div>
 </template>
@@ -30,10 +32,10 @@ import ProductComponent from './ProductComponent.vue';
 const props = defineProps({
     products: Array,
     productPath: String,
-    isConnected: Boolean
+    isConnected: Boolean,
+    pathAddWishlist: String,
+    pathAddCart: String,
 });
-
-console.log(props.productPath);
 
 const products = JSON.parse(props.products);
 const sortOrder = ref("default");
