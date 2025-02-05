@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Client;
 use App\Entity\Product;
+use App\Entity\Wishlist;
 use App\Repository\WishlistRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -47,6 +48,40 @@ class WishlistController extends AbstractController
         ]);
     }
 
+    #[Route('/wishlist/add/{id}', name: 'wishlist_add', methods: ['GET'])]
+    public function addToWishlist(Product $product, EntityManagerInterface $entityManager, Request $request): Response
+    {
+        $user = $this->getUser();
+        if (!$user instanceof Client) {
+            throw $this->createAccessDeniedException('Vous devez être connecté en tant que client.');
+        }
+
+        $referer = $request->headers->get('referer');
+
+        $wishlistProducts = $user->getWishlists()->map(fn($wishlist) => $wishlist->getProduct());
+        if ($wishlistProducts->contains($product)) {
+            $this->addFlash('warning', 'Ce produit est déjà dans votre liste de souhaits.');
+            if ($referer) {
+                return $this->redirect($referer);
+            }
+            return $this->redirectToRoute('wishlist');
+        }
+
+        $wishlist = new Wishlist();
+        $wishlist->setClient($user);
+        $wishlist->setProduct($product);
+        $wishlistItem = $user->addWishlist($wishlist);
+
+        $entityManager->persist($wishlistItem);
+        $entityManager->flush();
+
+        $this->addFlash('success', 'Le produit a été ajouté à votre liste de souhaits.');
+        if ($referer) {
+            return $this->redirect($referer);
+        }
+
+        return $this->redirectToRoute('wishlist');
+    }
 
     #[Route('/wishlist/{id}', name: 'wishlist_remove', methods: ['POST'])]
     public function removeFromWishlist(Request $request, Product $product, EntityManagerInterface $entityManager, WishlistRepository $wishlistRepository): Response
