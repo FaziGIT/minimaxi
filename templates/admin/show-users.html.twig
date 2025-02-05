@@ -4,7 +4,13 @@
 
 {% block body %}
 
-    <div class="relative overflow-x-auto shadow-md sm:rounded-lag mt-7">
+    <div class="flex justify-start mb-6 mx-7">
+        <a href="{{ path('app_admin') }}"
+           class="inline-block mt-4 px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-700">
+            Retour
+        </a>
+    </div>
+    <div class="relative overflow-x-auto shadow-md sm:rounded-lag mt-7 rounded-xl">
         <table class="w-full text-sm text-left rtl:text-right text-gray-500">
             <thead class="text-xs text-gray-700 uppercase bg-gray-200">
             <tr>
@@ -35,14 +41,16 @@
                         {{ client.roles[0] }}
                     </td>
                     <td class="px-6 py-4">
-                        {{ client.reviews|length }} commentaire(s)
+                        <a href="{{ path('app_admin_show_users_review',{'id': client.id} ) }}">
+                            {{ client.reviews|length }} commentaire(s)
+                        </a>
                     </td>
                     <td class="px-6 py-4">
                         {{ client.verified ? 'Oui' : 'Non' }}
                     </td>
                     <td class="px-6 py-4 flex gap-3">
-                        <a href=""
-                           class="inline-block mt-4 px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-700">
+                        <a href="{{ path('app_admin_ban_user', {'id': client.id}) }}"
+                           class="inline-block px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-700">
                             <svg class="h-6 w-6" fill="white" viewBox="0 0 32 32"
                                  xmlns="http://www.w3.org/2000/svg">
                                 <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
@@ -59,12 +67,11 @@
         </table>
 
     </div>
-    {#        Ajouter bouton code promo #}
-    <div class="flex justify-end">
-        <a href="{{ path('app_discount_code_new') }}"
-           class="inline-block mt-4 px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-700">
-            Ajouter un code promo
-        </a>
 
+    <div class="flex justify-start mb-6 mx-7">
+        <a href="{{ path('app_admin') }}"
+           class="inline-block mt-4 px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-700">
+            Retour
+        </a>
     </div>
 {% endblock %}

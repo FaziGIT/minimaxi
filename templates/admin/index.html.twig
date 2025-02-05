@@ -12,7 +12,8 @@
             <div class="flex items-center space-x-4">
                 <div class="w-24 h-24">
                     {% if app.user.avatar %}
-                        <img src="{{ asset(app.user.avatar) }}" alt="Avatar de {{ app.user.email }}" class="w-full h-full object-cover rounded-full">
+                        <img src="{{ asset(app.user.avatar) }}" alt="Avatar de {{ app.user.email }}"
+                             class="w-full h-full object-cover rounded-full">
                     {% endif %}
                 </div>
                 <div>
@@ -24,13 +25,16 @@
         <p class="text-center text-gray-600 mb-8">Accédez rapidement aux différentes sections d'administration.</p>
 
         <div class="flex flex-row justify-around">
-            <a href="{{ path('app_discount_code_index') }}" class="text-white bg-black px-4 py-2 rounded-md hover:bg-gray-700 w-fit">
+            <a href="{{ path('app_discount_code_index') }}"
+               class="text-white bg-black px-4 py-2 rounded-md hover:bg-gray-700 w-fit">
                 <span class="font-semibold">Voir les codes de réduction</span>
             </a>
-            <a href="{{ path('app_admin_product') }}" class="text-white bg-black px-4 py-2 rounded-md hover:bg-gray-700 w-fit">
+            <a href="{{ path('app_admin_product') }}"
+               class="text-white bg-black px-4 py-2 rounded-md hover:bg-gray-700 w-fit">
                 <span class="font-semibold">Voir les produits</span>
             </a>
-            <a href="#" class="text-white bg-black px-4 py-2 rounded-md hover:bg-gray-700 w-fit">
+            <a href="{{ path('app_admin_show_users') }}"
+               class="text-white bg-black px-4 py-2 rounded-md hover:bg-gray-700 w-fit">
                 <span class="font-semibold">Voir les utilisateurs</span>
             </a>
         </div>

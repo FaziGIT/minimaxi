@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Client;
 use App\Entity\Review;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -40,4 +41,16 @@ class ReviewRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+    /**
+     * @param Client $client
+     * @return array<Review>
+     */
+    public function findAllReviewsByUser(Client $client): array
+    {
+        return $this->createQueryBuilder('r')
+            ->andWhere('r.client = :client')
+            ->setParameter('client', $client)
+            ->getQuery()
+            ->getResult();
+    }
 }
