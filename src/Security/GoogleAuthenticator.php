@@ -1,4 +1,5 @@
 <?php
+
 # src/Security/GoogleAuthenticator.php
 namespace App\Security;
 

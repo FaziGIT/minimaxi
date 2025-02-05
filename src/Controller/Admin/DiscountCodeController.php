@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Admin;
 
 use App\Entity\DiscountCode;
 use App\Form\DiscountCodeType;
@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/discount/code')]
+#[Route('/admin/discount-code')]
 final class DiscountCodeController extends AbstractController
 {
     #[Route(name: 'app_discount_code_index', methods: ['GET'])]
@@ -30,6 +30,13 @@ final class DiscountCodeController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $uppercase = \strtoupper($discountCode->getCode());
+            $discountCode->setCode($uppercase);
+
+            if ($discountCode->getPercentage() > 100) {
+                $discountCode->setPercentage(100);
+            }
+
             $entityManager->persist($discountCode);
             $entityManager->flush();
 
@@ -42,14 +49,6 @@ final class DiscountCodeController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_discount_code_show', methods: ['GET'])]
-    public function show(DiscountCode $discountCode): Response
-    {
-        return $this->render('discount_code/show.html.twig', [
-            'discount_code' => $discountCode,
-        ]);
-    }
-
     #[Route('/{id}/edit', name: 'app_discount_code_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, DiscountCode $discountCode, EntityManagerInterface $entityManager): Response
     {
@@ -57,6 +56,10 @@ final class DiscountCodeController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            if ($discountCode->getPercentage() > 100) {
+                $discountCode->setPercentage(100);
+            }
+
             $entityManager->flush();
 
             return $this->redirectToRoute('app_discount_code_index', [], Response::HTTP_SEE_OTHER);
@@ -71,9 +74,33 @@ final class DiscountCodeController extends AbstractController
     #[Route('/{id}', name: 'app_discount_code_delete', methods: ['POST'])]
     public function delete(Request $request, DiscountCode $discountCode, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$discountCode->getId(), $request->getPayload()->getString('_token'))) {
-            $entityManager->remove($discountCode);
-            $entityManager->flush();
+        if ($this->isCsrfTokenValid('delete' . $discountCode->getId(), $request->getPayload()->getString('_token'))) {
+            try {
+                //delete all the orders linked to the discount code
+                foreach ($discountCode->getOrders() as $order) {
+                    $order->setAppliedDiscount(null);
+                }
+
+                // update the global price
+                foreach ($discountCode->getOrders() as $order) {
+                    $totalPrice = 0;
+                    foreach ($order->getOrderItems() as $item) {
+                        $item->setGlobalPrice($item->getProduct()->getPrice() * $item->getQuantity());
+                        $totalPrice += $item->getGlobalPrice();
+                    }
+                    $order->setTotalPrice($totalPrice);
+                }
+
+                $entityManager->remove($discountCode);
+                $entityManager->flush();
+
+                $this->addFlash('success', 'Le code promo a été supprimé avec succès.');
+            } catch (\Exception $e) {
+                // Message d'erreur en cas d'échec
+                $this->addFlash('error', 'Une erreur est survenue lors de la suppression du code promo.');
+            }
+        } else {
+            $this->addFlash('error', 'La suppression du code promo a échoué.');
         }
 
         return $this->redirectToRoute('app_discount_code_index', [], Response::HTTP_SEE_OTHER);

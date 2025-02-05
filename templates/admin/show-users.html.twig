@@ -1,0 +1,77 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Admin - Affichage des utilisateurs{% endblock %}
+
+{% block body %}
+
+    <div class="flex justify-start mb-6 mx-7">
+        <a href="{{ path('app_admin') }}"
+           class="inline-block mt-4 px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-700">
+            Retour
+        </a>
+    </div>
+    <div class="relative overflow-x-auto shadow-md sm:rounded-lag mt-7 rounded-xl">
+        <table class="w-full text-sm text-left rtl:text-right text-gray-500">
+            <thead class="text-xs text-gray-700 uppercase bg-gray-200">
+            <tr>
+                <th scope="col" class="px-6 py-3">
+                    Email
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Rôles
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Nombre de commentaires
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Est vérifié
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Action
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for client in clients %}
+                <tr class="odd:bg-white even:bg-gray-50 border-b border-gray-200 {{ client.roles[0] == 'ROLE_BANNED' ? '!text-red-500' : '' }}">
+                    <th scope="row" class="px-6 py-4 font-bold whitespace-nowrap">
+                        {{ client.email }}
+                    </th>
+                    <td class="px-6 py-4">
+                        {{ client.roles[0] }}
+                    </td>
+                    <td class="px-6 py-4">
+                        <a href="{{ path('app_admin_show_users_review',{'id': client.id} ) }}">
+                            {{ client.reviews|length }} commentaire(s)
+                        </a>
+                    </td>
+                    <td class="px-6 py-4">
+                        {{ client.verified ? 'Oui' : 'Non' }}
+                    </td>
+                    <td class="px-6 py-4 flex gap-3">
+                        <a href="{{ path('app_admin_ban_user', {'id': client.id}) }}"
+                           class="inline-block px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-700">
+                            <svg class="h-6 w-6" fill="white" viewBox="0 0 32 32"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                                <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                                <g id="SVGRepo_iconCarrier"><title>hammer-drop</title>
+                                    <path d="M29.262 19.935l-1.434 0.828-2.004-3.472 2.507-1.447-1.819-3.15-2.507 1.447-2.044-3.54 1.434-0.828-1.968-3.409-0.507 0.293c-2.327-3.949-4.951-5.448-6.37-5.891h-2.669c3.288 1.18 5.69 3.446 7.426 6.822l-0.476 0.275c-3.008-3.491-6.947-6.091-11.244-7.096h-6.377c5.419 0.865 10.042 4.15 13.317 9.581l-0.094 0.054c-2.685-2.653-5.441-4.955-8.54-6.553 2.053 1.441 3.899 3.425 5.678 5.911-3.197-3.196-6.459-5.844-10.438-7.184v2.204c3.606 0.998 7.105 3.682 9.896 7.587l-0.469 0.271 1.968 3.409 1.434-0.828 2.044 3.54-11.596 6.695-0.284-0.492-3.254 1.879 2.387 4.134 3.254-1.879-0.284-0.492 11.596-6.695 2.004 3.472-1.434 0.828 1.968 3.409 10.865-6.273-1.968-3.409zM10.824 3.291c2.607 1.076 4.955 3.091 6.201 5.613l-0.711 0.41-5.49-6.024z"></path>
+                                </g>
+                            </svg>
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+
+    <div class="flex justify-start mb-6 mx-7">
+        <a href="{{ path('app_admin') }}"
+           class="inline-block mt-4 px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-700">
+            Retour
+        </a>
+    </div>
+{% endblock %}

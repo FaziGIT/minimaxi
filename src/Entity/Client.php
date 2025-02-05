@@ -34,7 +34,7 @@ class Client extends User
     /**
      * @var Collection<int, Wishlist>
      */
-    #[ORM\OneToMany(targetEntity: Wishlist::class, mappedBy: 'client', orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: Wishlist::class, mappedBy: 'client', cascade: ['persist'], orphanRemoval: true)]
     private Collection $wishlists;
 
     /**

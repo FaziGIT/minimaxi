@@ -16,6 +16,34 @@ class ProductRepository extends ServiceEntityRepository
         parent::__construct($registry, Product::class);
     }
 
+    /**
+     * @param int $limit
+     * @return array<Product>
+     */
+    public function findMostRecentProducts(int $limit): array
+    {
+        return $this->createQueryBuilder('p')
+            ->orderBy('p.createdAt', 'DESC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+    }
+
+
+    public function findTopRatedProducts(int $limit): array
+    {
+        return $this->createQueryBuilder('p')
+            ->leftJoin('p.reviews', 'r')
+            ->leftJoin('p.imageProducts', 'img')
+            ->select('p.id, p.name, p.price, MIN(img.url) AS firstImage, AVG(r.rating) AS avgRating')
+            ->groupBy('p.id')
+            ->orderBy('avgRating', 'DESC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getArrayResult();
+    }
+
+
     //    /**
     //     * @return Product[] Returns an array of Product objects
     //     */

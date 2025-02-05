@@ -19,7 +19,7 @@ class Order
     private ?int $id = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
-    private ?string $totalPrice = null;
+    private ?string $totalPrice = '0';
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $createdAt = null;
@@ -46,6 +46,8 @@ class Order
     public function __construct()
     {
         $this->orderItems = new ArrayCollection();
+        $this->createdAt = new \DateTime();
+        $this->updatedAt = new \DateTime();
     }
 
     public function getId(): ?int
@@ -89,12 +91,12 @@ class Order
         return $this;
     }
 
-    public function getState(): ?OrderStatusEnum
+    public function getStatus(): ?OrderStatusEnum
     {
         return $this->status;
     }
 
-    public function setState(OrderStatusEnum $status): static
+    public function setStatus(OrderStatusEnum $status): static
     {
         $this->status = $status;
 

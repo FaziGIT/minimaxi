@@ -2,8 +2,11 @@
 
 namespace App\Repository;
 
+use App\Entity\Client;
+use App\Entity\Product;
 use App\Entity\Wishlist;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -15,6 +18,57 @@ class WishlistRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Wishlist::class);
     }
+
+
+    public function findProductsByClientWithPagination(Client $client, int $limit, int $offset): array
+    {
+        return $this->createQueryBuilder('w')
+            ->innerJoin('w.product', 'p')
+            ->leftJoin('p.imageProducts', 'img')
+            ->select('p.id, p.name, p.price, MIN(img.url) AS image') // Récupère uniquement l'image principale
+            ->where('w.client = :client')
+            ->setParameter('client', $client)
+            ->groupBy('p.id')
+            ->setMaxResults($limit)
+            ->setFirstResult($offset)
+            ->getQuery()
+            ->getArrayResult();
+    }
+
+    public function countProductsByClient(Client $client): int
+    {
+        return (int) $this->createQueryBuilder('w')
+            ->select('COUNT(DISTINCT w.product)') // Compter les produits uniques
+            ->where('w.client = :client')
+            ->setParameter('client', $client)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    public function findPaginatedByClient(Client $client, int $limit, int $offset): array
+    {
+        $qb = $this->createQueryBuilder('w')
+            ->innerJoin('w.product', 'p')
+            ->leftJoin('p.imageProducts', 'img')
+            ->addSelect('p', 'img') // Fetch the full product and image entities
+            ->where('w.client = :client')
+            ->setParameter('client', $client)
+            ->orderBy('p.name', 'ASC') // Sort by product name
+            ->setFirstResult($offset)
+            ->setMaxResults($limit);
+
+        $query = $qb->getQuery();
+
+        // Use the Doctrine Paginator
+        $paginator = new Paginator($query);
+
+        return [
+            iterator_to_array($paginator), // Paginated results
+            $paginator->count(),          // Total number of results
+        ];
+    }
+
+
 
     //    /**
     //     * @return Wishlist[] Returns an array of Wishlist objects

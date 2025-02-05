@@ -5,6 +5,7 @@
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
   imagesAvatarDestination: '%kernel.project_dir%/public/img/avatar/'
+  imagesProductDestination: '%kernel.project_dir%/public/img/products'
 services:
   App\EventListener\BannedListener:
     tags: [ kernel.event_listener ]
