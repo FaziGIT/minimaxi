@@ -5,8 +5,19 @@
 
 {% block body %}
 
+
     <div class="py-8">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            {% for message in app.flashes('warning') %}
+                <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-2" role="alert">
+                    <p>{{ message }}</p>
+                </div>
+            {% endfor %}
+            {% for message in app.flashes('success') %}
+                <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-2" role="alert">
+                    <p>{{ message }}</p>
+                </div>
+            {% endfor %}
             <div class="flex flex-col md:flex-row -mx-4">
                 <div class="md:flex-1 px-4">
                     <div class="h-[460px] rounded-lg bg-gray-300 mb-4">
@@ -39,10 +50,17 @@
                         </div>
                     </div>
                     <div class="flex gap-4">
-                        <a href="{{ path('app_order_add_to_cart', {'id': product.id}) }}"
-                           class="inline-block mt-4 px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-700">Ajouter
-                            au panier</a>
-                        <a class="inline-block mt-4 px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-700">
+                        {% if product.stockQuantity == 0 %}
+                            <span class="inline-block mt-4 px-4 py-2 bg-red-500 text-white rounded-lg">Rupture de
+                                stock</span>
+                        {% else %}
+                            <a href="{{ path('app_order_add_to_cart', {'id': product.id}) }}"
+                               class="inline-block mt-4 px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-700">Ajouter
+                                au panier</a>
+                        {% endif %}
+
+                        <a href="{{ path('wishlist_add', {'id': product.id}) }}"
+                           class="inline-block mt-4 px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-700">
                             Ajouter à la liste de souhait
                         </a>
                     </div>
