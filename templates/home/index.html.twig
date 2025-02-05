@@ -10,6 +10,17 @@
         </div>
     </section>
 
+    {% for message in app.flashes('warning') %}
+        <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mt-2" role="alert">
+            <p>{{ message }}</p>
+        </div>
+    {% endfor %}
+    {% for message in app.flashes('success') %}
+        <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mt-2" role="alert">
+            <p>{{ message }}</p>
+        </div>
+    {% endfor %}
+
     <!-- New Arrivals -->
     <section class="py-12">
         <div class="container mx-auto px-6">
@@ -17,11 +28,11 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
 
                 {% for product in products %}
-                    <div class="bg-white p-4 rounded-lg shadow-md hover:shadow-xl transition duration-300" {{ vue_component('ProductComponent', { 
-                        'products': product.name, 
-                        'price': product.price, 
-                        'image': product.imageProducts|length > 0 ? product.imageProducts|first.url : '', 
-                        'wishlist': false, 
+                    <div class="bg-white p-4 rounded-lg shadow-md hover:shadow-xl transition duration-300" {{ vue_component('ProductComponent', {
+                        'products': product.name,
+                        'price': product.price,
+                        'image': product.imageProducts|length > 0 ? product.imageProducts|first.url : '',
+                        'wishlist': false,
                         'path': path('app_product_show', { 'id': product.id }),
                         'isHome': true
                     }) }}></div>
@@ -31,7 +42,8 @@
                 {% endfor %}
             </div>
 
-            <a href="{{ path('app_product_index') }}" class="inline-block mt-4 px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-700">
+            <a href="{{ path('app_product_index') }}"
+               class="inline-block mt-4 px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-700">
                 Tout voir
             </a>
 
@@ -45,11 +57,11 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
 
                 {% for topProduct in topProducts %}
-                <div class="bg-white p-4 rounded-lg shadow-md hover:shadow-xl transition duration-300" {{ vue_component('ProductComponent', { 
-                        'products': topProduct.name, 
-                        'price': topProduct.price, 
-                        'image': topProduct.firstImage, 
-                        'wishlist': false, 
+                    <div class="bg-white p-4 rounded-lg shadow-md hover:shadow-xl transition duration-300" {{ vue_component('ProductComponent', {
+                        'products': topProduct.name,
+                        'price': topProduct.price,
+                        'image': topProduct.firstImage,
+                        'wishlist': false,
                         'path': path('app_product_show', { 'id': topProduct.id }),
                         'isHome': true
                     }) }}></div>
@@ -58,7 +70,8 @@
                 {% endfor %}
             </div>
 
-            <a href="{{ path('app_product_index') }}" class="inline-block mt-4 px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-700">
+            <a href="{{ path('app_product_index') }}"
+               class="inline-block mt-4 px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-700">
                 Tout voir
             </a>
 
