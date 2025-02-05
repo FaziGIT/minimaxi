@@ -9,23 +9,16 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
             {% if products|length > 0 %}
                 {% for product in products %}
-                    <div class="bg-white p-4 rounded-lg shadow-md relative">
-                        {% if product.image %}
-                            <img src="{{ product.image }}" alt="{{ product.name }}" class="w-full h-40 object-cover rounded-md">
-                        {% else %}
-                            <img src="" alt="Image indisponible" class="w-full h-40 object-cover rounded-md">
-                        {% endif %}
-                        <h3 class="text-gray-800 font-bold mt-2">{{ product.name }}</h3>
-                        <p class="text-gray-600">{{ product.price }} €</p>
-
-                        <!-- Remove to wishlist -->
-                        <form action="{{ path('wishlist_remove', { id: product.id, page: currentPage }) }}" method="POST" class="absolute top-4 right-4">
-                            <input type="hidden" name="_token" value="{{ csrf_token('remove_wishlist' ~ product.id) }}">
-                            <button type="submit">
-                                <svg class="h-6 w-6 cursor-pointer" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="#ff0000"><path d="M4.79501 5C4.62688 5.13993 4.46746 5.29304 4.31803 5.45838C3.90017 5.92074 3.56869 6.46964 3.34255 7.07374C3.1164 7.67785 3 8.32532 3 8.9792C3 9.63308 3.1164 10.2806 3.34255 10.8847C3.56869 11.4888 3.90017 12.0377 4.31803 12.5L10.5162 19.3582C11.3103 20.2368 12.6897 20.2368 13.4838 19.3582L16.1691 16.3869" stroke="#ff0000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path><path d="M3 3L19 19" stroke="#ff0000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path><path d="M9.22217 4.37901C9.76813 4.62924 10.2642 4.99601 10.6821 5.45837V5.45837C11.3874 6.23883 12.6127 6.23883 13.3181 5.45837V5.45837C14.162 4.52459 15.3066 4 16.5001 4C17.6935 4 18.8381 4.52459 19.682 5.45837C20.526 6.39215 21.0001 7.65863 21.0001 8.97919C21.0001 10.2998 20.526 11.5662 19.682 12.5L18.7783 13.5" stroke="#ff0000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
-                            </button>
-                        </form>
-                    </div>
+                    <div class="bg-white p-4 rounded-lg shadow-md hover:shadow-xl transition duration-300" {{ vue_component('ProductComponent', { 
+                        'products': product.name, 
+                        'price': product.price, 
+                        'image': product.image, 
+                        'wishlist': true, 
+                        'path': path('app_product_show', { 'id': product.id }),
+                        'isHome': true,
+                        'pathRemoveWishlist': path('wishlist_remove', { id: product.id, page: currentPage }),
+                        'removeWishlistToken': csrf_token('remove_wishlist' ~ product.id)
+                    })}}></div>
                 {% endfor %}
             {% else %}
                 <p class="text-gray-500">Votre liste de souhaits est vide.</p>
