@@ -75,23 +75,32 @@ final class DiscountCodeController extends AbstractController
     public function delete(Request $request, DiscountCode $discountCode, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete' . $discountCode->getId(), $request->getPayload()->getString('_token'))) {
-            //delete all the orders linked to the discount code
-            foreach ($discountCode->getOrders() as $order) {
-                $order->setAppliedDiscount(null);
-            }
-
-            // update the global price
-            foreach ($discountCode->getOrders() as $order) {
-                $totalPrice = 0;
-                foreach ($order->getOrderItems() as $item) {
-                    $item->setGlobalPrice($item->getProduct()->getPrice() * $item->getQuantity());
-                    $totalPrice += $item->getGlobalPrice();
+            try {
+                //delete all the orders linked to the discount code
+                foreach ($discountCode->getOrders() as $order) {
+                    $order->setAppliedDiscount(null);
                 }
-                $order->setTotalPrice($totalPrice);
-            }
 
-            $entityManager->remove($discountCode);
-            $entityManager->flush();
+                // update the global price
+                foreach ($discountCode->getOrders() as $order) {
+                    $totalPrice = 0;
+                    foreach ($order->getOrderItems() as $item) {
+                        $item->setGlobalPrice($item->getProduct()->getPrice() * $item->getQuantity());
+                        $totalPrice += $item->getGlobalPrice();
+                    }
+                    $order->setTotalPrice($totalPrice);
+                }
+
+                $entityManager->remove($discountCode);
+                $entityManager->flush();
+
+                $this->addFlash('success', 'Le code promo a été supprimé avec succès.');
+            } catch (\Exception $e) {
+                // Message d'erreur en cas d'échec
+                $this->addFlash('error', 'Une erreur est survenue lors de la suppression du code promo.');
+            }
+        } else {
+            $this->addFlash('error', 'La suppression du code promo a échoué.');
         }
 
         return $this->redirectToRoute('app_discount_code_index', [], Response::HTTP_SEE_OTHER);

@@ -84,18 +84,27 @@ final class ProductController extends AbstractController
     public function delete(Request $request, Product $product, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete' . $product->getId(), $request->getPayload()->getString('_token'))) {
-            // delete all the images
-            foreach ($product->getImageProducts() as $image) {
-//                \dd($image);
-                if ($image->getUrl() && file_exists($this->getParameter('imagesProductDestination') . '/' . $image->getUrl())) {
-                    unlink($this->getParameter('imagesProductDestination') . '/' . $image->getUrl());
-                    $entityManager->remove($image);
+            try {
+                // delete all the images
+                foreach ($product->getImageProducts() as $image) {
+                    $imagePath = $this->getParameter('imagesProductDestination') . '/' . $image->getUrl();
+                    if ($image->getUrl() && file_exists($imagePath)) {
+                        unlink($imagePath);
+                        $entityManager->remove($image);
+                    }
                 }
+
+                $entityManager->remove($product);
+                $entityManager->flush();
+
+                $this->addFlash('success', 'Le produit a été supprimé avec succès.');
+            } catch (\Exception $e) {
+                $this->addFlash('error', 'Une erreur est survenue lors de la suppression du produit.');
             }
-            $entityManager->remove($product);
-            $entityManager->flush();
+        } else {
+            $this->addFlash('error', 'La suppression du produit a échoué.');
         }
 
-        return $this->redirectToRoute('app_product_index', [], Response::HTTP_SEE_OTHER);
+        return $this->redirectToRoute('app_admin_product', [], Response::HTTP_SEE_OTHER);
     }
 }

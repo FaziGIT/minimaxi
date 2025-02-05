@@ -3,6 +3,14 @@
 {% block title %}Code promo{% endblock %}
 
 {% block body %}
+    {% for type, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="p-4 mb-4 text-sm text-{{ type == 'error' ? 'red' : 'green' }}-800 rounded-lg bg-{{ type == 'error' ? 'red' : 'green' }}-50">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endfor %}
+
     <div class="flex justify-evenly mb-6 mx-7">
         <a href="{{ path('app_admin') }}"
            class="inline-block mt-4 px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-700">
