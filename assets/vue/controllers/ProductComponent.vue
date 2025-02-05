@@ -1,6 +1,6 @@
 <template>
-    <a :href="path" class="bg-white p-4 rounded-lg shadow-md hover:shadow-xl transition duration-300">
-        <img src="" alt="No image available" class="w-full h-40 object-cover rounded-md">
+    <a :href="path" :class="isHome ? '' : 'bg-white p-4 rounded-lg shadow-md hover:shadow-xl transition duration-300'">
+        <img :src="image" alt="No image available" class="w-full h-40 object-cover rounded-md">
         <hr class="my-4">
         <h3 class="text-gray-800 font-bold mt-4">{{ name }}</h3>
         <div class="flex justify-between items-center mt-2">
@@ -26,6 +26,7 @@ defineProps({
     price: Number,
     image: String,
     wishlist: Boolean,
-    path: String
+    path: String,
+    isHome: Boolean
 });
 </script>

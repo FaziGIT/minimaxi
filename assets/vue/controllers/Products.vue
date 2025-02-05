@@ -14,9 +14,10 @@
             :key="product.id" 
             :name="product.name" 
             :price="product.price" 
-            image="test" 
+            image="" 
             :wishlist="true"
             :path="`${props.productPath.replace('ID_PLACEHOLDER',`${product.id}`)}`"
+            :isHome="false"
         />
     </div>
 </template>

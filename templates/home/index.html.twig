@@ -17,15 +17,15 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
 
                 {% for product in products %}
-                    <div class="bg-white p-4 rounded-lg shadow-md">
-                        {% if product.imageProducts|length > 0 %}
-                            <img src="{{ product.imageProducts|first.url }}" alt="{{ product.name }}" class="w-full h-40 object-cover rounded-md">
-                        {% else %}
-                            <img src="" alt="No image available" class="w-full h-40 object-cover rounded-md">
-                        {% endif %}
-                        <h3 class="text-gray-800 font-bold mt-4">{{ product.name }}</h3>
-                        <p class="text-gray-600">{{ product.price }} €</p>
-                    </div>
+                    <div class="bg-white p-4 rounded-lg shadow-md hover:shadow-xl transition duration-300" {{ vue_component('ProductComponent', { 
+                        'products': product.name, 
+                        'price': product.price, 
+                        'image': product.imageProducts|length > 0 ? product.imageProducts|first.url : '', 
+                        'wishlist': false, 
+                        'path': path('app_product_show', { 'id': product.id }),
+                        'isHome': true
+                    }) }}></div>
+
                 {% else %}
                     <p class="text-center text-gray-500">Pas de produits trouvés</p>
                 {% endfor %}
@@ -45,15 +45,14 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
 
                 {% for topProduct in topProducts %}
-                    <div class="bg-white p-4 rounded-lg shadow-md">
-                        {% if topProduct.firstImage %}
-                            <img src="{{ topProduct.firstImage }}" alt="{{ topProduct.name }}" class="w-full h-40 object-cover rounded-md">
-                        {% else %}
-                            <img src="" alt="No image available" class="w-full h-40 object-cover rounded-md">
-                        {% endif %}
-                        <h3 class="text-gray-800 font-bold mt-4">{{ topProduct.name }}</h3>
-                        <p class="text-gray-600">{{ topProduct.price }} €</p>
-                    </div>
+                <div class="bg-white p-4 rounded-lg shadow-md hover:shadow-xl transition duration-300" {{ vue_component('ProductComponent', { 
+                        'products': topProduct.name, 
+                        'price': topProduct.price, 
+                        'image': topProduct.firstImage, 
+                        'wishlist': false, 
+                        'path': path('app_product_show', { 'id': topProduct.id }),
+                        'isHome': true
+                    }) }}></div>
                 {% else %}
                     <p class="text-center text-gray-500">Pas de produits trouvés</p>
                 {% endfor %}
