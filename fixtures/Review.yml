@@ -4,7 +4,7 @@ App\Entity\Review:
     rating: '<numberBetween(1, 5)>'
     createdAt: '<dateTimeBetween("-1 year", "now")>'
     updatedAt: '<dateTimeBetween("now", "now")>'
-    client: '@client_random_<numberBetween(1, 10)>'
+    client: '@client_*'
 
   review_mini_{1..50} (extends review):
     product: '@product_mini_<numberBetween(1, 100)>'

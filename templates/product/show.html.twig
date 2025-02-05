@@ -54,9 +54,9 @@
 		<section class="py-8 lg:py-16 antialiased">
 			<div class="max-w-2xl mx-auto px-4">
 				<div class="flex justify-between items-center mb-6">
-					<h2 class="text-lg lg:text-2xl font-bold text-gray-900">Commentaires ({{ product.reviews|length}})</h2>
+					<h2 class="text-lg lg:text-2xl font-bold text-gray-900">Commentaires ({{ reviews|length}})</h2>
 				</div>
-				{% if app.user and product.reviews|filter(review => review.client.id == app.user.id)  %}
+				{% if app.user and reviews|filter(review => review.client.id == app.user.id)  %}
 					<form class="mb-6">
 						<div class="py-2 px-4 mb-4 bg-white rounded-lg rounded-t-lg border border-gray-200">
 							<label for="comment" class="sr-only">Your comment</label>
@@ -68,7 +68,7 @@
 					</form>
 				{% endif %}
 
-				{% for review in product.reviews %}
+				{% for review in reviews %}
 
 					<article class="p-6 mb-3 text-base border-t border-gray-200">
 						<div class="flex items-center mb-4">
