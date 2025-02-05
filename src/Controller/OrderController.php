@@ -7,6 +7,7 @@ use App\Enum\OrderStatusEnum;
 use App\Repository\DiscountCodeRepository;
 use App\Repository\OrderRepository;
 use DateTimeImmutable;
+use Doctrine\DBAL\Exception\DatabaseDoesNotExist;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -41,11 +42,73 @@ final class OrderController extends AbstractController
             return $this->redirectToRoute('app_order_index', [], Response::HTTP_SEE_OTHER);
         }
 
+        $error = false;
+        $itemsToRemove = [];
+        foreach ($cart->getOrderItems() as $item) {
+            $product = $item->getProduct();
+            $stockQuantity = $product->getStockQuantity();
+            $requestedQuantity = $item->getQuantity();
+
+            if ($stockQuantity < $requestedQuantity) {
+                $error = true;
+                if ($stockQuantity > 0) {
+                    $item->setQuantity($stockQuantity);
+                    $item->setGlobalPrice($product->getPrice() * $stockQuantity);
+                    $this->addFlash('error', 'Stock insuffisant pour l\'article ' . $product->getName() . '. Quantité ajustée à ' . $stockQuantity);
+                } else {
+                    // If no stock available, remove the item from the cart
+                    $itemsToRemove[] = $item;
+                    $this->addFlash('error', 'Article ' . $product->getName() . ' retiré du panier car plus de stock disponible');
+                }
+            }
+        }
+
+        foreach ($itemsToRemove as $item) {
+            $cart->removeOrderItem($item);
+            $entityManager->remove($item);
+        }
+
+        if ($error) {
+            $totalPrice = 0;
+            foreach ($cart->getOrderItems() as $item) {
+                $totalPrice += $item->getGlobalPrice();
+            }
+
+            if ($cart->getAppliedDiscount()) {
+                $discountCode = $cart->getAppliedDiscount();
+                $percentageDiscount = $discountCode->getPercentage(); // Assurez-vous que cette méthode existe
+                $totalPrice = $totalPrice - ($totalPrice * $percentageDiscount / 100);
+            }
+
+            $cart->setTotalPrice($totalPrice);
+
+            $entityManager->flush();
+            return $this->redirectToRoute('app_order_index', [], Response::HTTP_SEE_OTHER);
+        }
+
+        $totalPrice = 0;
+        foreach ($cart->getOrderItems() as $item) {
+            $product = $item->getProduct();
+            $product->setStockQuantity($product->getStockQuantity() - $item->getQuantity());
+
+            // Mise à jour du prix global de l'item
+            $item->setGlobalPrice($item->getProduct()->getPrice() * $item->getQuantity());
+            $totalPrice += $item->getGlobalPrice();
+        }
+
+        if ($cart->getAppliedDiscount()) {
+            $discountCode = $cart->getAppliedDiscount();
+            $percentageDiscount = $discountCode->getPercentage();
+            $totalPrice = $totalPrice - ($totalPrice * $percentageDiscount / 100);
+        }
+
+        $cart->setTotalPrice($totalPrice);
         $cart->setStatus(OrderStatusEnum::PAID);
         $cart->setUpdatedAt(new DateTimeImmutable());
 
         $entityManager->flush();
         $this->addFlash('success', 'Votre commande a été payée avec succès');
+
         return $this->redirectToRoute('app_order_index', [], Response::HTTP_SEE_OTHER);
     }
 

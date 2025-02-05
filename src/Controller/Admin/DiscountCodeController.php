@@ -32,6 +32,11 @@ final class DiscountCodeController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $uppercase = \strtoupper($discountCode->getCode());
             $discountCode->setCode($uppercase);
+
+            if ($discountCode->getPercentage() > 100) {
+                $discountCode->setPercentage(100);
+            }
+
             $entityManager->persist($discountCode);
             $entityManager->flush();
 
@@ -51,6 +56,11 @@ final class DiscountCodeController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+
+            if ($discountCode->getPercentage() > 100) {
+                $discountCode->setPercentage(100);
+            }
+
             $entityManager->flush();
 
             return $this->redirectToRoute('app_discount_code_index', [], Response::HTTP_SEE_OTHER);
