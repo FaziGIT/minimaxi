@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello AdminController!{% endblock %}
+{% block title %}Espace administrateur{% endblock %}
 
 {% block body %}
     <div class="container mx-auto my-10 px-10">
@@ -36,6 +36,10 @@
             <a href="{{ path('app_admin_show_users') }}"
                class="text-white bg-black px-4 py-2 rounded-md hover:bg-gray-700 w-fit">
                 <span class="font-semibold">Voir les utilisateurs</span>
+            </a>
+            <a href="{{ path('app_admin_category') }}"
+               class="text-white bg-black px-4 py-2 rounded-md hover:bg-gray-700 w-fit">
+                <span class="font-semibold">Voir les catégories</span>
             </a>
         </div>
 
