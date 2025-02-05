@@ -2,7 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\Order;
 use App\Entity\OrderItem;
+use App\Entity\Product;
 use App\Enum\OrderStatusEnum;
 use App\Repository\DiscountCodeRepository;
 use App\Repository\OrderRepository;
@@ -16,6 +18,68 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class OrderController extends AbstractController
 {
+    #[Route('/cart/add/{id}', name: 'app_order_add_to_cart', methods: ['GET'])]
+    public function addToCart(Product $product, EntityManagerInterface $entityManager, OrderRepository $orderRepository, Request $request): Response
+    {
+        $cart = $orderRepository->findPendingOrderById($this->getUser());
+
+        if (!$cart) {
+            $cart = new Order();
+            $cart->setClient($this->getUser());
+            $cart->setStatus(OrderStatusEnum::PENDING);
+            $entityManager->persist($cart);
+        }
+
+        // Vérifier si le produit est déjà dans le panier
+        $existingOrderItem = null;
+        foreach ($cart->getOrderItems() as $item) {
+            if ($item->getProduct()->getId() === $product->getId()) {
+                $existingOrderItem = $item;
+                break;
+            }
+        }
+
+        if ($existingOrderItem) {
+            // Si le produit est déjà dans le panier, on augmente la quantité
+            $existingOrderItem->setQuantity($existingOrderItem->getQuantity() + 1);
+            $existingOrderItem->setGlobalPrice($existingOrderItem->getQuantity() * $product->getPrice());
+        } else {
+            // Sinon, on ajoute un nouvel article
+            $orderItem = new OrderItem();
+            $orderItem->setProduct($product);
+            $orderItem->setQuantity(1);
+            $orderItem->setGlobalPrice($product->getPrice());
+            $orderItem->setLinkedOrder($cart);
+
+            $cart->addOrderItem($orderItem);
+
+            $entityManager->persist($orderItem);
+        }
+
+        $totalPrice = 0;
+        foreach ($cart->getOrderItems() as $item) {
+            $totalPrice += $item->getGlobalPrice();
+        }
+
+        if ($cart->getAppliedDiscount()) {
+            $discountCode = $cart->getAppliedDiscount();
+            $percentageDiscount = $discountCode->getPercentage();
+            $totalPrice -= ($totalPrice * $percentageDiscount / 100);
+        }
+
+        $cart->setTotalPrice($totalPrice);
+
+        $entityManager->persist($cart);
+        $entityManager->flush();
+
+        $referer = $request->headers->get('referer');
+        if ($referer) {
+            return $this->redirect($referer);
+        }
+
+        return $this->redirectToRoute('app_order_index');
+    }
+
     #[Route('/cart', name: 'app_order_index', methods: ['GET'])]
     public function index(OrderRepository $orderRepository): Response
     {
@@ -119,36 +183,8 @@ final class OrderController extends AbstractController
             return $this->redirectToRoute('app_order_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        $entityManager->remove($orderItem);
-        $entityManager->flush();
-        return $this->redirectToRoute('app_order_index', [], Response::HTTP_SEE_OTHER);
-    }
-
-    #[Route('/cart/update/{id}', name: 'app_order_update_item', methods: ['POST'])]
-    public function updateQuantityOrderItem(OrderItem $orderItem, Request $request, EntityManagerInterface $entityManager): Response
-    {
-        if ($orderItem->getLinkedOrder()->getClient() !== $this->getUser()) {
-            return $this->redirectToRoute('app_order_index', [], Response::HTTP_SEE_OTHER);
-        }
-
-        $order = $orderItem->getLinkedOrder();
-        $action = $request->request->get('action');
-
-        if ($action === 'increase') {
-            // regarder si il ya assez en stock
-            $product = $orderItem->getProduct();
-            if ($product->getStockQuantity() < $orderItem->getQuantity() + 1) {
-                $this->addFlash('error', 'Stock insuffisant pour l\'article ' . $product->getName());
-                return $this->redirectToRoute('app_order_index', [], Response::HTTP_SEE_OTHER);
-            }
-            $orderItem->setQuantity($orderItem->getQuantity() + 1);
-        } elseif ($action === 'decrease' && $orderItem->getQuantity() > 1) {
-            $orderItem->setQuantity($orderItem->getQuantity() - 1);
-        } elseif ($action === 'decrease' && $orderItem->getQuantity() === 1) {
-            return $this->redirectToRoute('app_order_remove_item', ['id' => $orderItem->getId()], Response::HTTP_SEE_OTHER);
-        }
-
         // update global price
+        $order = $orderItem->getLinkedOrder();
         $totalPrice = 0;
         foreach ($order->getOrderItems() as $item) {
             $item->setGlobalPrice($item->getProduct()->getPrice() * $item->getQuantity());
@@ -161,7 +197,54 @@ final class OrderController extends AbstractController
         }
 
         $order->setTotalPrice($totalPrice);
+
+        $entityManager->remove($orderItem);
         $entityManager->flush();
+        return $this->redirectToRoute('app_order_index', [], Response::HTTP_SEE_OTHER);
+    }
+
+    #[Route('/cart/update/{id}', name: 'app_order_update_item', methods: ['POST'])]
+    public function updateQuantityOrderItem(OrderItem $orderItem, Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $order = $orderItem->getLinkedOrder();
+
+        // Vérifie que l'utilisateur est bien le propriétaire de la commande
+        if ($order->getClient() !== $this->getUser()) {
+            return $this->redirectToRoute('app_order_index', [], Response::HTTP_SEE_OTHER);
+        }
+
+        $action = $request->request->get('action');
+
+        if ($action === 'increase') {
+            // Vérifie le stock disponible avant d'ajouter une unité
+            $product = $orderItem->getProduct();
+            if ($product->getStockQuantity() < $orderItem->getQuantity() + 1) {
+                $this->addFlash('error', 'Stock insuffisant pour l\'article ' . $product->getName());
+                return $this->redirectToRoute('app_order_index', [], Response::HTTP_SEE_OTHER);
+            }
+            $orderItem->setQuantity($orderItem->getQuantity() + 1);
+        } elseif ($action === 'decrease' && $orderItem->getQuantity() > 1) {
+            $orderItem->setQuantity($orderItem->getQuantity() - 1);
+        } elseif ($action === 'decrease' && $orderItem->getQuantity() === 1) {
+            $order->removeOrderItem($orderItem);
+            $entityManager->remove($orderItem);
+        }
+
+        $totalPrice = 0;
+        foreach ($order->getOrderItems() as $item) {
+            $item->setGlobalPrice($item->getProduct()->getPrice() * $item->getQuantity());
+            $totalPrice += $item->getGlobalPrice();
+        }
+
+        if ($order->getAppliedDiscount()) {
+            $totalPrice -= ($totalPrice * $order->getAppliedDiscount()->getPercentage() / 100);
+        }
+
+        $order->setTotalPrice($totalPrice);
+
+        $entityManager->persist($order);
+        $entityManager->flush();
+
         return $this->redirectToRoute('app_order_index', [], Response::HTTP_SEE_OTHER);
     }
 
