@@ -11,10 +11,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/category')]
+#[Route('/admin/category')]
 final class CategoryController extends AbstractController
 {
-    #[Route(name: 'app_category_index', methods: ['GET'])]
+    #[Route(name: 'app_admin_category', methods: ['GET'])]
     public function index(CategoryRepository $categoryRepository): Response
     {
         return $this->render('category/index.html.twig', [
@@ -22,7 +22,7 @@ final class CategoryController extends AbstractController
         ]);
     }
 
-    #[Route('/new', name: 'app_category_new', methods: ['GET', 'POST'])]
+    #[Route('/new', name: 'app_admin_category_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $category = new Category();
@@ -33,7 +33,7 @@ final class CategoryController extends AbstractController
             $entityManager->persist($category);
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_category_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_admin_category', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('category/new.html.twig', [
@@ -42,7 +42,7 @@ final class CategoryController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_category_show', methods: ['GET'])]
+    #[Route('/{id}', name: 'app_admin_category_show', methods: ['GET'])]
     public function show(Category $category): Response
     {
         return $this->render('category/show.html.twig', [
@@ -50,7 +50,7 @@ final class CategoryController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/edit', name: 'app_category_edit', methods: ['GET', 'POST'])]
+    #[Route('/{id}/edit', name: 'app_admin_category_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Category $category, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createForm(CategoryType::class, $category);
@@ -59,7 +59,7 @@ final class CategoryController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_category_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_admin_category', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('category/edit.html.twig', [
@@ -68,14 +68,24 @@ final class CategoryController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_category_delete', methods: ['POST'])]
+    #[Route('/{id}', name: 'app_admin_category_delete', methods: ['POST'])]
     public function delete(Request $request, Category $category, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete' . $category->getId(), $request->getPayload()->getString('_token'))) {
+            // Vérifiez si la catégorie contient des produits
+            if ($category->getProducts()->count() > 0) {
+                // Ajoutez un message flash pour indiquer qu'elle ne peut pas être supprimée
+                $this->addFlash('error', 'Vous ne pouvez pas supprimer cette catégorie car elle contient des produits.');
+                return $this->redirectToRoute('app_admin_category', [], Response::HTTP_SEE_OTHER);
+            }
+
+            // Supprimez la catégorie si elle ne contient pas de produits
             $entityManager->remove($category);
             $entityManager->flush();
+
+            $this->addFlash('success', 'Catégorie supprimée avec succès.');
         }
 
-        return $this->redirectToRoute('app_category_index', [], Response::HTTP_SEE_OTHER);
+        return $this->redirectToRoute('app_admin_category', [], Response::HTTP_SEE_OTHER);
     }
 }
