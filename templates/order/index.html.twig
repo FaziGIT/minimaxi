@@ -11,19 +11,20 @@
                 <div class="mx-auto w-full flex-none lg:max-w-2xl xl:max-w-4xl">
                     <div class="space-y-6">
 
-                        {% for message in app.flashes('error') %}
-                            <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50"
-                                 role="alert">
-                                <span class="font-medium">{{ message }}</span>
-                            </div>
-                        {% endfor %}
+{#                        {% for message in app.flashes('error') %}#}
+{#                            <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50"#}
+{#                                 role="alert">#}
+{#                                <span class="font-medium">{{ message }}</span>#}
+{#                            </div>#}
+{#                        {% endfor %}#}
 
-                        {% for message in app.flashes('success') %}
-                            <div class="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50"
-                                 role="alert">
-                                <span class="font-medium">{{ message }}</span>
-                            </div>
-                        {% endfor %}
+{#                        {% for message in app.flashes('success') %}#}
+{#                            <div class="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50"#}
+{#                                 role="alert">#}
+{#                                <span class="font-medium">{{ message }}</span>#}
+{#                            </div>#}
+{#                        {% endfor %}#}
+                        {% include 'message/message_flash.html.twig' %}
 
                         {% if cart is not null %}
                             {% set totalGlobalPrice = 0 %}

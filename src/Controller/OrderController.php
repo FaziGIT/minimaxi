@@ -55,6 +55,7 @@ final class OrderController extends AbstractController
 
             $entityManager->persist($orderItem);
         }
+        $this->addFlash('success', 'Produit "' . $product->getName() . '" ajouté au panier.');
 
         $totalPrice = 0;
         foreach ($cart->getOrderItems() as $item) {
