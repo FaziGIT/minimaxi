@@ -8,16 +8,17 @@
 
     <div class="py-8">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            {% for message in app.flashes('warning') %}
-                <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-2" role="alert">
-                    <p>{{ message }}</p>
-                </div>
-            {% endfor %}
-            {% for message in app.flashes('success') %}
-                <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-2" role="alert">
-                    <p>{{ message }}</p>
-                </div>
-            {% endfor %}
+{#            {% for message in app.flashes('warning') %}#}
+{#                <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-2" role="alert">#}
+{#                    <p>{{ message }}</p>#}
+{#                </div>#}
+{#            {% endfor %}#}
+{#            {% for message in app.flashes('success') %}#}
+{#                <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-2" role="alert">#}
+{#                    <p>{{ message }}</p>#}
+{#                </div>#}
+{#            {% endfor %}#}
+            {% include 'message/message_flash.html.twig' %}
             <div class="flex flex-col md:flex-row -mx-4">
                 <div class="md:flex-1 px-4">
                     <div class="h-[460px] rounded-lg bg-gray-300 mb-4">
@@ -58,11 +59,10 @@
                                class="inline-block mt-4 px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-700">Ajouter
                                 au panier</a>
                         {% endif %}
-
-                        <a href="{{ path('wishlist_add', {'id': product.id}) }}"
-                           class="inline-block mt-4 px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-700">
+                        <button id="addToWishlist" type="button"
+                                class="inline-block mt-4 px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-700">
                             Ajouter à la liste de souhait
-                        </a>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -197,4 +197,72 @@
     </div>
 
 
+{% endblock %}
+{% block javascripts %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const addToWishlistButton = document.getElementById('addToWishlist');
+
+            addToWishlistButton.addEventListener('click', async function () {
+                try {
+                    const response = await fetch(`/api/wishlist/add/{{ product.id }}`, {
+                        method: 'POST',
+                        headers: {
+                            'Accept': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        credentials: 'same-origin'
+                    });
+
+                    console.log(response)
+
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+
+                    const data = await response.json();
+
+                    // Create flash message element
+                    const flashMessage = document.createElement('div');
+                    flashMessage.className = data.type === 'success'
+                        ? 'bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-2'
+                        : data.type === 'warning'
+                            ? 'bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-2'
+                            : 'bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-2';
+                    flashMessage.role = 'alert';
+
+                    const messageText = document.createElement('p');
+                    messageText.textContent = data.message;
+                    flashMessage.appendChild(messageText);
+
+                    // Insert the flash message at the top of the container
+                    const container = document.querySelector('.max-w-6xl');
+                    container.insertBefore(flashMessage, container.firstChild);
+
+                    // Remove the message after 3 seconds
+                    setTimeout(() => {
+                        flashMessage.remove();
+                    }, 3000);
+
+                } catch (error) {
+                    console.error('Error:', error);
+                    // Handle error case
+                    const flashMessage = document.createElement('div');
+                    flashMessage.className = 'bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-2';
+                    flashMessage.role = 'alert';
+
+                    const messageText = document.createElement('p');
+                    messageText.textContent = 'Une erreur est survenue lors de l\'ajout à la liste de souhaits.';
+                    flashMessage.appendChild(messageText);
+
+                    const container = document.querySelector('.max-w-6xl');
+                    container.insertBefore(flashMessage, container.firstChild);
+
+                    setTimeout(() => {
+                        flashMessage.remove();
+                    }, 3000);
+                }
+            });
+        });
+    </script>
 {% endblock %}

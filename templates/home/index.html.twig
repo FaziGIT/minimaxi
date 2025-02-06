@@ -10,16 +10,7 @@
         </div>
     </section>
 
-    {% for message in app.flashes('warning') %}
-        <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mt-2" role="alert">
-            <p>{{ message }}</p>
-        </div>
-    {% endfor %}
-    {% for message in app.flashes('success') %}
-        <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mt-2" role="alert">
-            <p>{{ message }}</p>
-        </div>
-    {% endfor %}
+    {% include 'message/message_flash.html.twig' %}
 
     <!-- New Arrivals -->
     <section class="py-12">
@@ -83,6 +74,5 @@
 
         </div>
     </section>
-
 
 {% endblock %}
