@@ -20,7 +20,6 @@ class HomeController extends AbstractController
         $products = $productRepository->findMostRecentProducts(4);
         $topProducts = $productRepository->findTopRatedProducts(4);
         return $this->render('home/index.html.twig', [
-            'controller_name' => 'HomeController',
             'products' => $products,
             'topProducts' => $topProducts,
         ]);

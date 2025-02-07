@@ -23,8 +23,11 @@ class ProductRepository extends ServiceEntityRepository
     public function findMostRecentProducts(int $limit): array
     {
         return $this->createQueryBuilder('p')
+            ->select('p.id, p.name,p.price, MIN(img.url) as imageProducts')
+            ->leftJoin('p.imageProducts', 'img')
             ->orderBy('p.createdAt', 'DESC')
             ->setMaxResults($limit)
+            ->groupBy('p.id')
             ->getQuery()
             ->getResult();
     }
