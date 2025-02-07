@@ -58,16 +58,16 @@ class createImgFromProductForm
                 }
             }
 
-            // Generate a unique name for the file
+            // Générer un nom de fichier unique
             $fichier = md5(uniqid()) . '.' . $fichierImage->guessExtension();
 
-            // Get the destination directory
+            // Récupérer le répertoire d'upload
             $uploadDir = $this->params->get('imagesProductDestination');
 
-            // Move the file
+            // Déplacer le fichier dans le répertoire d'upload
             $fichierImage->move($uploadDir, $fichier);
 
-            // Update the image URL
+            // Mettre à jour l'entité avec le nom du fichier
             $imageProduct->setUrl($fichier);
         }
     }

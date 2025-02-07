@@ -4,7 +4,6 @@ namespace App\Controller;
 
 use App\Entity\Product;
 use App\Entity\Review;
-use App\Form\CategoryType;
 use App\Form\ReviewType;
 use App\Repository\ProductRepository;
 use Doctrine\ORM\EntityManagerInterface;
