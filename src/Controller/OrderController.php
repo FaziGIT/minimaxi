@@ -253,7 +253,7 @@ final class OrderController extends AbstractController
     public function appliedDiscountCode(OrderRepository $orderRepository, DiscountCodeRepository $discountCodeRepository, Request $request, EntityManagerInterface $entityManager): Response
     {
         $cart = $orderRepository->findPendingOrderById($this->getUser());
-        $discountCode = strtoupper($request->request->get('discountCode'));
+        $discountCode = \trim(strtoupper($request->request->get('discountCode')));
         $verifiedDiscountCode = $discountCodeRepository->findOneBy(['code' => $discountCode]);
         $totalGlobalPrice = 0;
 
