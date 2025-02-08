@@ -32,8 +32,17 @@ class UserProfileController extends AbstractController
             OrderStatusEnum::SHIPPED->value,
         ];
 
-        $currentOrders = $orderRepository->findByStatuses($user, $currentStatuses);
-        $deliveredOrders = $orderRepository->findByStatus($user, OrderStatusEnum::DELIVERED->value);
+        $orders = $orderRepository->findAllByUser($user);
+
+        $currentOrders = [];
+        $deliveredOrders = [];
+        foreach ($orders as $order) {
+            if (in_array($order->getStatus()->value, $currentStatuses, true)) {
+                $currentOrders[] = $order;
+            } else {
+                $deliveredOrders[] = $order;
+            }
+        }
 
         return $this->render('user_profile/index.html.twig', [
             'user' => $user,
@@ -54,30 +63,25 @@ class UserProfileController extends AbstractController
         $page = max(1, (int)$request->query->get('page', 1));
         $limit = 6;
 
-        $orders = [];
-        $totalOrders = 0;
-
-        if ($type === 'current') {
-            $statuses = [
+        $statuses = match ($type) {
+            'current' => [
                 OrderStatusEnum::PAID->value,
                 OrderStatusEnum::PENDING->value,
                 OrderStatusEnum::SHIPPED->value,
-            ];
-            [$orders, $totalOrders] = $orderRepository->findPaginatedByStatuses($user, $statuses, $page, $limit);
-        } elseif ($type === 'delivered') {
-            [$orders, $totalOrders] = $orderRepository->findPaginatedByStatus($user, OrderStatusEnum::DELIVERED->value, $page, $limit);
-        }
+            ],
+            'delivered' => OrderStatusEnum::DELIVERED->value,
+            default => throw $this->createNotFoundException('Type de commande invalide'),
+        };
 
-        $totalPages = (int)ceil($totalOrders / $limit);
+        [$orders, $totalOrders] = $orderRepository->findPaginatedOrders($user, $statuses, $page, $limit);
 
         return $this->render('user_profile/orders.html.twig', [
             'orders' => $orders,
             'type' => $type,
             'currentPage' => $page,
-            'totalPages' => $totalPages,
+            'totalPages' => (int)ceil($totalOrders / $limit),
         ]);
     }
-
 
     #[Route('/edit', name: 'app_profile_edit')]
     public function editProfile(Request $request, EntityManagerInterface $entityManager): Response

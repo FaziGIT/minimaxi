@@ -20,46 +20,37 @@ class OrderRepository extends ServiceEntityRepository
         parent::__construct($registry, Order::class);
     }
 
-    public function findByStatuses(Client $user, array $statuses): array
+    public function findAllByUser(Client $user): array
     {
         return $this->createQueryBuilder('o')
             ->select('o', 'oi', 'p')
             ->where('o.client = :user')
             ->leftJoin('o.orderItems', 'oi')
             ->leftJoin('oi.product', 'p')
-            ->andWhere('o.status IN (:statuses)')
             ->setParameter('user', $user)
-            ->setParameter('statuses', $statuses)
             ->orderBy('o.createdAt', 'DESC')
             ->getQuery()
             ->getResult();
     }
 
-    public function findByStatus(Client $user, string $status): array
-    {
-        return $this->createQueryBuilder('o')
-            ->select('o', 'oi', 'p')
-            ->where('o.client = :user')
-            ->leftJoin('o.orderItems', 'oi')
-            ->leftJoin('oi.product', 'p')
-            ->andWhere('o.status = :status')
-            ->setParameter('user', $user)
-            ->setParameter('status', $status)
-            ->orderBy('o.createdAt', 'DESC')
-            ->getQuery()
-            ->getResult();
-    }
-
-    public function findPaginatedByStatuses(Client $user, array $statuses, int $page, int $limit): array
+    public function findPaginatedOrders(Client $user, array|string $statuses, int $page, int $limit): array
     {
         $qb = $this->createQueryBuilder('o')
+            ->select('o', 'oi', 'p')
+            ->leftJoin('o.orderItems', 'oi')
+            ->leftJoin('oi.product', 'p')
             ->where('o.client = :user')
-            ->andWhere('o.status IN (:statuses)')
             ->setParameter('user', $user)
-            ->setParameter('statuses', $statuses)
             ->orderBy('o.createdAt', 'DESC')
             ->setFirstResult(($page - 1) * $limit)
             ->setMaxResults($limit);
+        if (is_array($statuses)) {
+            $qb->andWhere('o.status IN (:statuses)')
+                ->setParameter('statuses', $statuses);
+        } else {
+            $qb->andWhere('o.status = :status')
+                ->setParameter('status', $statuses);
+        }
 
         $paginator = new Paginator($qb->getQuery());
 
@@ -68,28 +59,6 @@ class OrderRepository extends ServiceEntityRepository
             $paginator->count(),
         ];
     }
-
-    public function findPaginatedByStatus(Client $user, string $status, int $page, int $limit): array
-    {
-        $qb = $this->createQueryBuilder('o')
-            ->where('o.client = :user')
-            ->andWhere('o.status = :status')
-            ->setParameter('user', $user)
-            ->setParameter('status', $status)
-            ->orderBy('o.createdAt', 'DESC')
-            ->setFirstResult(($page - 1) * $limit)
-            ->setMaxResults($limit);
-
-        $paginator = new Paginator($qb->getQuery());
-
-        return [
-            iterator_to_array($paginator),
-            $paginator->count(),
-        ];
-    }
-
-
-
 
 //    /**
 //     * @return Order[] Returns an array of Order objects
