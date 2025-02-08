@@ -6,6 +6,7 @@ use App\Entity\Product;
 use App\Entity\Review;
 use App\Form\ReviewType;
 use App\Repository\ProductRepository;
+use App\Repository\ReviewRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -39,7 +40,7 @@ final class ProductController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_product_show', methods: ['GET', 'POST'])]
-    public function show(Product $product, Request $request, EntityManagerInterface $entityManager): Response
+    public function show(Product $product, Request $request, EntityManagerInterface $entityManager, ReviewRepository $reviewRepository): Response
     {
 
         $review = new Review();
@@ -62,8 +63,9 @@ final class ProductController extends AbstractController
             return $this->redirectToRoute('app_product_show', ['id' => $product->getId()], Response::HTTP_SEE_OTHER);
         }
 
+        $getReviewsFromProduct = $reviewRepository->getReviewsFromProduct($product);
 
-        $nonBannedReviews = array_filter($product->getReviews()->toArray(), function ($review) {
+        $nonBannedReviews = array_filter($getReviewsFromProduct, function ($review) {
             return !in_array('ROLE_BANNED', $review->getClient()->GetRoles());
         });
 

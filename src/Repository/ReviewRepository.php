@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Client;
+use App\Entity\Product;
 use App\Entity\Review;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -50,6 +51,17 @@ class ReviewRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('r')
             ->andWhere('r.client = :client')
             ->setParameter('client', $client)
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function getReviewsFromProduct(Product $product)
+    {
+        return $this->createQueryBuilder('r')
+            ->select('r', 'l')
+            ->leftJoin('r.likes', 'l')
+            ->andWhere('r.product = :product')
+            ->setParameter('product', $product)
             ->getQuery()
             ->getResult();
     }
