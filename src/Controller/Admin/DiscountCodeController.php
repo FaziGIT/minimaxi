@@ -18,7 +18,7 @@ final class DiscountCodeController extends AbstractController
     public function index(DiscountCodeRepository $discountCodeRepository): Response
     {
         return $this->render('discount_code/index.html.twig', [
-            'discount_codes' => $discountCodeRepository->findAll(),
+            'discount_codes' => $discountCodeRepository->findAllOptimized(),
         ]);
     }
 
