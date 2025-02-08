@@ -20,36 +20,34 @@ class OrderRepository extends ServiceEntityRepository
         parent::__construct($registry, Order::class);
     }
 
-    public function findByStatuses(Client $user, array $statuses, int $limit = null): array
+    public function findByStatuses(Client $user, array $statuses): array
     {
-        $qb = $this->createQueryBuilder('o')
+        return $this->createQueryBuilder('o')
+            ->select('o', 'oi', 'p')
             ->where('o.client = :user')
+            ->leftJoin('o.orderItems', 'oi')
+            ->leftJoin('oi.product', 'p')
             ->andWhere('o.status IN (:statuses)')
             ->setParameter('user', $user)
             ->setParameter('statuses', $statuses)
-            ->orderBy('o.createdAt', 'DESC');
-
-        if ($limit) {
-            $qb->setMaxResults($limit);
-        }
-
-        return $qb->getQuery()->getResult();
+            ->orderBy('o.createdAt', 'DESC')
+            ->getQuery()
+            ->getResult();
     }
 
-    public function findByStatus(Client $user, string $status, int $limit = null): array
+    public function findByStatus(Client $user, string $status): array
     {
-        $qb = $this->createQueryBuilder('o')
+        return $this->createQueryBuilder('o')
+            ->select('o', 'oi', 'p')
             ->where('o.client = :user')
+            ->leftJoin('o.orderItems', 'oi')
+            ->leftJoin('oi.product', 'p')
             ->andWhere('o.status = :status')
             ->setParameter('user', $user)
             ->setParameter('status', $status)
-            ->orderBy('o.createdAt', 'DESC');
-
-        if ($limit) {
-            $qb->setMaxResults($limit);
-        }
-
-        return $qb->getQuery()->getResult();
+            ->orderBy('o.createdAt', 'DESC')
+            ->getQuery()
+            ->getResult();
     }
 
     public function findPaginatedByStatuses(Client $user, array $statuses, int $page, int $limit): array

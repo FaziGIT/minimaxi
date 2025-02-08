@@ -31,8 +31,9 @@ class UserProfileController extends AbstractController
             OrderStatusEnum::PENDING->value,
             OrderStatusEnum::SHIPPED->value,
         ];
-        $currentOrders = $orderRepository->findByStatuses($user, $currentStatuses, 4);
-        $deliveredOrders = $orderRepository->findByStatus($user, OrderStatusEnum::DELIVERED->value, 4);
+
+        $currentOrders = $orderRepository->findByStatuses($user, $currentStatuses);
+        $deliveredOrders = $orderRepository->findByStatus($user, OrderStatusEnum::DELIVERED->value);
 
         return $this->render('user_profile/index.html.twig', [
             'user' => $user,
@@ -50,7 +51,7 @@ class UserProfileController extends AbstractController
             throw $this->createAccessDeniedException('Vous devez être connecté.');
         }
 
-        $page = max(1, (int) $request->query->get('page', 1));
+        $page = max(1, (int)$request->query->get('page', 1));
         $limit = 6;
 
         $orders = [];
@@ -67,7 +68,7 @@ class UserProfileController extends AbstractController
             [$orders, $totalOrders] = $orderRepository->findPaginatedByStatus($user, OrderStatusEnum::DELIVERED->value, $page, $limit);
         }
 
-        $totalPages = (int) ceil($totalOrders / $limit);
+        $totalPages = (int)ceil($totalOrders / $limit);
 
         return $this->render('user_profile/orders.html.twig', [
             'orders' => $orders,
