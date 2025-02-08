@@ -46,6 +46,15 @@ class ProductRepository extends ServiceEntityRepository
             ->getArrayResult();
     }
 
+    public function findAllOptimized(): array
+    {
+        return $this->createQueryBuilder('p')
+            ->select('p', 'c')
+            ->leftJoin('p.category', 'c')
+            ->getQuery()
+            ->getResult();
+    }
+
 
     //    /**
     //     * @return Product[] Returns an array of Product objects
