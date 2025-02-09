@@ -3,7 +3,7 @@
 - Create an .env.local (cp .env .env.local)
   - ```DATABASE_URL="postgresql://minimaxi:password@postgres:5432/minimaxi?serverVersion=17&charset=utf8"```
 - ```make up```
-- ```make composer-install```
+- ```make composer install```
   - go on http://localhost:8080/ if you want to use adminer
     - server : postgres
     - username : minimaxi
@@ -11,8 +11,8 @@
 - ```make fixtures``` (to load the fixtures, if fixtures file exists)
 - ```make npm -- install vue-loader@^17.0.0 --save-dev``` (if you need this, a message will appear)
 - ```make npm install```
-- ```make npm run dev```
 - ```make npm run watch``` (when you work)
+- ```make npm run build``` (in prod)
 - go to http://localhost:8000
 - Enjoy ! (and hard work 😎)
 
