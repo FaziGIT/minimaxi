@@ -1,0 +1,9 @@
+App\Entity\Wishlist:
+  wishlist (template):
+    client: '@client_random_<numberBetween(1, 10)>'
+
+  wishlist_mini{1..50} (extends wishlist):
+    product: '@product_mini_<numberBetween(1, 100)>'
+
+  wishlist_maxi{1..50} (extends wishlist):
+    product: '@product_maxi_<numberBetween(1, 100)>'

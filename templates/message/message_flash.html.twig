@@ -1,0 +1,29 @@
+
+{% for label, messages in app.flashes %}
+    {% for message in messages %}
+        {% set colors = {
+            'success': 'bg-green-100 border-l-4 border-green-500 text-green-700',
+            'warning': 'bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700',
+            'error': 'bg-red-100 border-l-4 border-red-500 text-red-700'
+        } %}
+
+        <div class="flash-message {{ colors[label] }} p-4 mt-2 relative flex justify-between items-center">
+            <p class="flex-1">{{ message }}</p>
+            <button class="text-xl font-bold px-2 hover:opacity-75" onclick="this.parentElement.remove();">
+                &times;
+            </button>
+        </div>
+    {% endfor %}
+{% endfor %}
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        setTimeout(() => {
+            document.querySelectorAll('.flash-message').forEach(msg => {
+                msg.style.transition = "opacity 0.5s";
+                msg.style.opacity = "0";
+                setTimeout(() => msg.remove(), 500);
+            });
+        }, 5000);
+    });
+</script>

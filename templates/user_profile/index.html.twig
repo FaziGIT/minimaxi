@@ -1,0 +1,127 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon Profil{% endblock %}
+
+{% block body %}
+    <div class="container mx-auto my-10 px-10">
+        <h1 class="text-3xl font-bold mb-6 mt-6 py-12 text-center">Mon Profil</h1>
+
+        <!-- Carte Informations Personnelles -->
+        <h2 class="text-xl font-semibold mb-4">Informations Personnelles</h2>
+        <div class="bg-white shadow-md border p-4 rounded-lg mb-6 flex justify-between items-center">
+            <!-- Avatar -->
+            <div class="flex items-center space-x-4">
+                <div class="w-24 h-24">
+                    {% if app.user.avatar %}
+                        {% if app.user.avatar starts with 'https' %}
+                            <img src="{{ app.user.avatar }}" alt="Avatar de {{ app.user.email }}"
+                                 class="w-full h-full object-cover rounded-full">
+                        {% elseif app.user.avatar is not null %}
+                            <img src="{{ asset('img/avatar/' ~ app.user.avatar) }}" alt="Avatar de {{ app.user.email }}"
+                                 class="w-full h-full object-cover rounded-full">
+                        {% else %}
+                            <img src="{{ asset('img/imageNotFound.png') }}" alt="Avatar de {{ app.user.email }}"
+                                 class="w-full h-full object-cover rounded-full">
+                        {% endif %}
+                    {% endif %}
+                </div>
+                <div>
+                    <p class="px-10"><strong>Email :</strong> {{ app.user.email }}</p>
+                    <p class="px-10"><strong>Adresse
+                            :</strong> {{ app.user.address ? app.user.address : 'Non renseignée' }}</p>
+                    <p class="px-10"><strong>Téléphone
+                            :</strong> {{ app.user.phoneNumber ? app.user.phoneNumber : 'Non renseigné' }}</p>
+                    <p class="px-10"><strong>Points de fidélité :</strong> {{ app.user.discountPoint }}</p>
+                </div>
+            </div>
+            <a href="{{ path('app_profile_edit') }}">
+                <svg class="h-6 w-6 text-gray-600 cursor-pointer" viewBox="0 0 24 24" fill="none"
+                     xmlns="http://www.w3.org/2000/svg">
+                    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                    <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                    <g id="SVGRepo_iconCarrier">
+                        <path d="M21.2799 6.40005L11.7399 15.94C10.7899 16.89 7.96987 17.33 7.33987 16.7C6.70987 16.07 7.13987 13.25 8.08987 12.3L17.6399 2.75002C17.8754 2.49308 18.1605 2.28654 18.4781 2.14284C18.7956 1.99914 19.139 1.92124 19.4875 1.9139C19.8359 1.90657 20.1823 1.96991 20.5056 2.10012C20.8289 2.23033 21.1225 2.42473 21.3686 2.67153C21.6147 2.91833 21.8083 3.21243 21.9376 3.53609C22.0669 3.85976 22.1294 4.20626 22.1211 4.55471C22.1128 4.90316 22.0339 5.24635 21.8894 5.5635C21.7448 5.88065 21.5375 6.16524 21.2799 6.40005V6.40005Z"
+                              stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                        <path d="M11 4H6C4.93913 4 3.92178 4.42142 3.17163 5.17157C2.42149 5.92172 2 6.93913 2 8V18C2 19.0609 2.42149 20.0783 3.17163 20.8284C3.92178 21.5786 4.93913 22 6 22H17C19.21 22 20 20.2 20 18V13"
+                              stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                    </g>
+                </svg>
+            </a>
+        </div>
+
+        <!-- Carte Codes Promo Actifs -->
+        <div class="p-6 mb-6">
+            <h2 class="text-xl font-semibold mb-4">Mes Codes Promo Actifs</h2>
+            {% if discountCodes|length > 0 %}
+                <ul>
+                    {% for discount in discountCodes %}
+                        <li class="border bg-white shadow-md p-4 rounded-lg mb-4 flex justify-between items-center">
+                            <div>
+                                <p><strong>Code :</strong> {{ discount.code }}</p>
+                                <p><strong>Réduction :</strong> -{{ discount.percentage }}%</p>
+                                <p><strong>Valable jusqu'au :</strong> {{ discount.validUntil|date("d/m/Y") }}</p>
+                            </div>
+                            <a onclick="navigator.clipboard.writeText('{{ discount.code }}')">
+                                <svg class="h-6 w-6 text-gray-600 cursor-pointer" viewBox="0 0 24 24" fill="none"
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                                    <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                                    <g id="SVGRepo_iconCarrier">
+                                        <path d="M19.53 8L14 2.47C13.8595 2.32931 13.6688 2.25018 13.47 2.25H11C10.2707 2.25 9.57118 2.53973 9.05546 3.05546C8.53973 3.57118 8.25 4.27065 8.25 5V6.25H7C6.27065 6.25 5.57118 6.53973 5.05546 7.05546C4.53973 7.57118 4.25 8.27065 4.25 9V19C4.25 19.7293 4.53973 20.4288 5.05546 20.9445C5.57118 21.4603 6.27065 21.75 7 21.75H14C14.7293 21.75 15.4288 21.4603 15.9445 20.9445C16.4603 20.4288 16.75 19.7293 16.75 19V17.75H17C17.7293 17.75 18.4288 17.4603 18.9445 16.9445C19.4603 16.4288 19.75 15.7293 19.75 15V8.5C19.7421 8.3116 19.6636 8.13309 19.53 8ZM14.25 4.81L17.19 7.75H14.25V4.81ZM15.25 19C15.25 19.3315 15.1183 19.6495 14.8839 19.8839C14.6495 20.1183 14.3315 20.25 14 20.25H7C6.66848 20.25 6.35054 20.1183 6.11612 19.8839C5.8817 19.6495 5.75 19.3315 5.75 19V9C5.75 8.66848 5.8817 8.35054 6.11612 8.11612C6.35054 7.8817 6.66848 7.75 7 7.75H8.25V15C8.25 15.7293 8.53973 16.4288 9.05546 16.9445C9.57118 17.4603 10.2707 17.75 11 17.75H15.25V19ZM17 16.25H11C10.6685 16.25 10.3505 16.1183 10.1161 15.8839C9.8817 15.6495 9.75 15.3315 9.75 15V5C9.75 4.66848 9.8817 4.35054 10.1161 4.11612C10.3505 3.8817 10.6685 3.75 11 3.75H12.75V8.5C12.7526 8.69811 12.8324 8.88737 12.9725 9.02747C13.1126 9.16756 13.3019 9.24741 13.5 9.25H18.25V15C18.25 15.3315 18.1183 15.6495 17.8839 15.8839C17.6495 16.1183 17.3315 16.25 17 16.25Z"
+                                              fill="#000000"></path>
+                                    </g>
+                                </svg>
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="text-gray-500">Aucun code promo actif.</p>
+            {% endif %}
+        </div>
+
+        <!-- Carte Commandes en Cours -->
+        <div class="p-6 mb-6">
+            <h2 class="text-xl font-semibold mb-4">Commandes en Cours</h2>
+            {% if currentOrders|length > 0 %}
+                <ul class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {% for order in currentOrders|slice(0, 3) %}
+                        <li class="border bg-white shadow-md rounded-lg overflow-hidden relative max-w-sm">
+                            {% include 'order/orderCard.html.twig' %}
+                        </li>
+                    {% endfor %}
+                </ul>
+                {% if currentOrders|length > 3 %}
+                    <div class="mt-6">
+                        <a href="{{ path('app_user_orders', {type: 'current'}) }}"
+                           class="text-white bg-black px-4 py-2 rounded-md hover:bg-gray-700">Tout afficher</a>
+                    </div>
+                {% endif %}
+            {% else %}
+                <p class="text-gray-500">Aucune commande en cours.</p>
+            {% endif %}
+        </div>
+
+        <!-- Historiques des commandes -->
+        <div class="p-6 mb-6">
+            <h2 class="text-xl font-semibold mb-4">Historiques des commandes</h2>
+            {% if deliveredOrders|length > 0 %}
+                <ul class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {% for order in deliveredOrders|slice(0, 3) %}
+                        <li class="border bg-white shadow-md rounded-lg overflow-hidden relative max-w-sm">
+                            {% include 'order/orderCard.html.twig' %}
+                        </li>
+                    {% endfor %}
+                </ul>
+                {% if deliveredOrders|length > 3 %}
+                    <div class="mt-6">
+                        <a href="{{ path('app_user_orders', {type: 'delivered'}) }}"
+                           class="text-white bg-black px-4 py-2 rounded-md hover:bg-gray-700">Tout afficher</a>
+                    </div>
+                {% endif %}
+            {% else %}
+                <p class="text-gray-500">Aucune commande passée.</p>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
