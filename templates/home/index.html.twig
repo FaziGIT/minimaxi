@@ -26,7 +26,7 @@
                         'wishlist': false,
                         'path': path('app_product_show', { 'id': product.id }),
                         'isHome': true,
-                        'isConnected': app.user ? true : false,
+                        'isConnected': app.user and not is_granted("ROLE_ADMIN") ? true : false,
                         'pathAddWishlist': path('wishlist_add', { 'id': product.id }),
                         'pathAddCart': path('app_order_add_to_cart', { 'id': product.id })
                     }) }}></div>
@@ -58,7 +58,7 @@
                         'wishlist': false,
                         'path': path('app_product_show', { 'id': topProduct.id }),
                         'isHome': true,
-                        'isConnected': app.user ? true : false,
+                        'isConnected': app.user and not is_granted("ROLE_ADMIN") ? true : false,
                         'pathAddWishlist': path('wishlist_add', { 'id': topProduct.id }),
                         'pathAddCart': path('app_order_add_to_cart', { 'id': topProduct.id })
                     }) }}></div>
