@@ -3,6 +3,7 @@
 namespace App\Controller\Admin;
 
 use App\Entity\DiscountCode;
+use App\Enum\OrderStatusEnum;
 use App\Form\DiscountCodeType;
 use App\Repository\DiscountCodeRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -97,6 +98,10 @@ final class DiscountCodeController extends AbstractController
 
                 // update the global price
                 foreach ($discountCode->getOrders() as $order) {
+                    // Quand tu suppr un code promo alors quil est pas en PENDING, ca fais rien
+                    if ($order->getStatus() !== OrderStatusEnum::PENDING) {
+                        continue;
+                    }
                     $totalPrice = 0;
                     foreach ($order->getOrderItems() as $item) {
                         $item->setGlobalPrice($item->getProduct()->getPrice() * $item->getQuantity());
