@@ -1,0 +1,13 @@
+App\Entity\Review:
+  review (template):
+    content: '<text(100)>'
+    rating: '<numberBetween(1, 5)>'
+    createdAt: '<dateTimeBetween("-1 year", "now")>'
+    updatedAt: '<dateTimeBetween("now", "now")>'
+    client: '@client_*'
+
+  review_mini_{1..50} (extends review):
+    product: '@product_mini_<numberBetween(1, 100)>'
+
+  review_maxi_{1..50} (extends review):
+    product: '@product_maxi_<numberBetween(1, 100)>'
