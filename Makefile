@@ -57,11 +57,19 @@ down:
 
 .PHONY: fixtures
 fixtures:
-	@docker exec -it $(PHP_CONTAINER) php bin/console d:f:l --no-interaction
+	@docker exec -it $(PHP_CONTAINER) php bin/console h:f:l --no-interaction
+
+.PHONY: migrate
+migrate:
+	@docker exec -it $(PHP_CONTAINER) php bin/console d:m:m --no-interaction
 
 .PHONY: composer-install
 composer-install:
 	@docker exec -it $(PHP_CONTAINER) composer install
+
+.PHONY: test
+test:
+	@docker exec -it $(PHP_CONTAINER) php bin/phpunit
 
 # Éviter les erreurs pour les cibles dynamiques
 %:

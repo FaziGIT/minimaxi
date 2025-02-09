@@ -1,0 +1,10 @@
+App\Entity\Like:
+  like (template):
+    client: '@client_random_<numberBetween(1, 10)>' #
+    createdAt: '<dateTimeBetween("-6 months", "now")>'
+
+  like_mini{1..50} (extends like):
+    review: '@review_mini_<numberBetween(1, 50)>'
+
+  like_maxi{1..50} (extends like):
+    review: '@review_maxi_<numberBetween(1, 50)>'
