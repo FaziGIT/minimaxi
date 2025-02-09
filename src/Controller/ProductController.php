@@ -2,11 +2,12 @@
 
 namespace App\Controller;
 
+use App\Entity\Client;
 use App\Entity\Product;
 use App\Entity\Review;
-use App\Form\CategoryType;
 use App\Form\ReviewType;
 use App\Repository\ProductRepository;
+use App\Repository\ReviewRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,8 +20,7 @@ final class ProductController extends AbstractController
     #[Route(name: 'app_product_index', methods: ['GET'])]
     public function index(ProductRepository $productRepository): Response
     {
-
-        $products = $productRepository->findAll();
+        $products = $productRepository->findAllOptimized();
 
         $productsArray = array_map(function ($product) {
             return [
@@ -29,8 +29,8 @@ final class ProductController extends AbstractController
                 'description' => $product->getDescription(),
                 'price' => $product->getPrice(),
                 'stockQuantity' => $product->getStockQuantity(),
-                'createdAt' => $product->getCreatedAt()?->format('Y-m-d H:i:s'),
-                'category' => $product->getCategory()?->getName(),
+                'createdAt' => $product->getCreatedAt()->format('Y-m-d H:i:s'),
+                'category' => $product->getCategory()->getName(),
                 'size' => $product->getSize()?->value
             ];
         }, $products);
@@ -41,7 +41,7 @@ final class ProductController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_product_show', methods: ['GET', 'POST'])]
-    public function show(Product $product, Request $request, EntityManagerInterface $entityManager): Response
+    public function show(Product $product, Request $request, EntityManagerInterface $entityManager, ReviewRepository $reviewRepository): Response
     {
 
         $review = new Review();
@@ -49,6 +49,10 @@ final class ProductController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            if (!$this->getUser() instanceof Client) {
+                throw $this->createAccessDeniedException('Vous devez être connecté en tant que client pour commenter.');
+            }
+
             if ($review->getRating() > 5) {
                 $review->setRating(5);
             }
@@ -64,8 +68,9 @@ final class ProductController extends AbstractController
             return $this->redirectToRoute('app_product_show', ['id' => $product->getId()], Response::HTTP_SEE_OTHER);
         }
 
+        $getReviewsFromProduct = $reviewRepository->getReviewsFromProduct($product);
 
-        $nonBannedReviews = array_filter($product->getReviews()->toArray(), function ($review) {
+        $nonBannedReviews = array_filter($getReviewsFromProduct, function ($review) {
             return !in_array('ROLE_BANNED', $review->getClient()->GetRoles());
         });
 

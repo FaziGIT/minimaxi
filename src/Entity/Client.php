@@ -17,7 +17,7 @@ class Client extends User
     private ?string $phoneNumber = null;
 
     #[ORM\Column]
-    private ?int $discountPoint = 0;
+    private int $discountPoint = 0;
 
     /**
      * @var Collection<int, Order>
@@ -75,7 +75,7 @@ class Client extends User
         return $this;
     }
 
-    public function getDiscountPoint(): ?int
+    public function getDiscountPoint(): int
     {
         return $this->discountPoint;
     }

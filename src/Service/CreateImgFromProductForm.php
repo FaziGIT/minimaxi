@@ -2,18 +2,22 @@
 
 namespace App\Service;
 
+use App\Entity\ImageProduct;
 use App\Entity\Product;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Form\FormInterface;
 
-class createImgFromProductForm
+class CreateImgFromProductForm
 {
     public function __construct(private ParameterBagInterface $params)
     {
     }
 
+    /**
+     * @param ArrayCollection<int, ImageProduct>|null $originalImages
+     */
     public function createImage(Product $product, FormInterface $form, EntityManagerInterface $entityManager, ?ArrayCollection $originalImages = null): void
     {
         // Récupérer la collection d'images du formulaire
@@ -34,7 +38,7 @@ class createImgFromProductForm
 
         // Traiter les images existantes et nouvelles
         foreach ($product->getImageProducts() as $index => $imageProduct) {
-            $imageField = $imageProducts->get($index);
+            $imageField = $imageProducts->get(strval($index));
 
             // Si le champ image n'existe pas ou ne contient pas de données
             if (!$imageField->has('image') || $imageField->get('image')->getData() === null) {
@@ -58,16 +62,16 @@ class createImgFromProductForm
                 }
             }
 
-            // Generate a unique name for the file
+            // Générer un nom de fichier unique
             $fichier = md5(uniqid()) . '.' . $fichierImage->guessExtension();
 
-            // Get the destination directory
+            // Récupérer le répertoire d'upload
             $uploadDir = $this->params->get('imagesProductDestination');
 
-            // Move the file
+            // Déplacer le fichier dans le répertoire d'upload
             $fichierImage->move($uploadDir, $fichier);
 
-            // Update the image URL
+            // Mettre à jour l'entité avec le nom du fichier
             $imageProduct->setUrl($fichier);
         }
     }

@@ -16,7 +16,10 @@ class DiscountCodeRepository extends ServiceEntityRepository
         parent::__construct($registry, DiscountCode::class);
     }
 
-    public function findLatestDiscountCode(int $limit): array
+    /**
+     * @return array<DiscountCode>
+     */
+    public function findLatestDiscountCode(): array
     {
         return $this->createQueryBuilder('d')
             ->where('d.validUntil > :today')
@@ -27,28 +30,15 @@ class DiscountCodeRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    //    /**
-    //     * @return DiscountCode[] Returns an array of DiscountCode objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('d')
-    //            ->andWhere('d.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('d.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
-
-    //    public function findOneBySomeField($value): ?DiscountCode
-    //    {
-    //        return $this->createQueryBuilder('d')
-    //            ->andWhere('d.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+    /**
+     * @return array<DiscountCode>
+     */
+    public function findAllOptimized(): array
+    {
+        return $this->createQueryBuilder('d')
+            ->select('d', 'o')
+            ->leftJoin('d.orders', 'o')
+            ->getQuery()
+            ->getResult();
+    }
 }
