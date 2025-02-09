@@ -32,18 +32,14 @@ class GoogleAuthenticator extends OAuth2Authenticator
     private ClientRegistry $clientRegistry;
     private EntityManagerInterface $entityManager;
     private RouterInterface $router;
-    private EmailVerifier $emailVerifier;
     private ParameterBagInterface $params;
-    private UserRepository $userRepository;
 
-    public function __construct(ClientRegistry $clientRegistry, EntityManagerInterface $entityManager, RouterInterface $router, EmailVerifier $emailVerifier, ParameterBagInterface $params, UserRepository $userRepository)
+    public function __construct(ClientRegistry $clientRegistry, EntityManagerInterface $entityManager, RouterInterface $router, ParameterBagInterface $params)
     {
         $this->clientRegistry = $clientRegistry;
         $this->entityManager = $entityManager;
         $this->router = $router;
-        $this->emailVerifier = $emailVerifier;
         $this->params = $params;
-        $this->userRepository = $userRepository;
     }
 
     public function supports(Request $request): ?bool
@@ -58,7 +54,7 @@ class GoogleAuthenticator extends OAuth2Authenticator
         $accessToken = $this->fetchAccessToken($client);
 
         return new SelfValidatingPassport(
-            new UserBadge($accessToken->getToken(), function () use ($accessToken, $client, $request) {
+            new UserBadge($accessToken->getToken(), function () use ($accessToken, $client) {
                 /** @var GoogleUser $googleUser */
                 $googleUser = $client->fetchUserFromToken($accessToken);
 

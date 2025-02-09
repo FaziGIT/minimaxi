@@ -7,7 +7,7 @@ use App\Enum\SizeProductEnum;
 use App\Form\ProductType;
 use App\Repository\CategoryRepository;
 use App\Repository\ProductRepository;
-use App\Service\createImgFromProductForm;
+use App\Service\CreateImgFromProductForm;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -18,7 +18,7 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/admin/product')]
 final class ProductController extends AbstractController
 {
-    public function __construct(private createImgFromProductForm $createImgFromProductForm)
+    public function __construct(private CreateImgFromProductForm $createImgFromProductForm)
     {
     }
 

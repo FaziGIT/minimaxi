@@ -11,7 +11,6 @@
         "doctrine/doctrine-bundle": "^2.13",
         "doctrine/doctrine-migrations-bundle": "^3.3",
         "doctrine/orm": "^3.3",
-        "friendsoftwig/twigcs": "^6.5",
         "hautelook/alice-bundle": "^2.14",
         "knpuniversity/oauth2-client-bundle": "^2.18",
         "league/oauth2-google": "^4.0",

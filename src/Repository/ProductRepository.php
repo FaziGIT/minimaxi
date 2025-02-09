@@ -23,13 +23,19 @@ class ProductRepository extends ServiceEntityRepository
     public function findMostRecentProducts(int $limit): array
     {
         return $this->createQueryBuilder('p')
+            ->select('p.id, p.name,p.price, MIN(img.url) as imageProducts')
+            ->leftJoin('p.imageProducts', 'img')
             ->orderBy('p.createdAt', 'DESC')
             ->setMaxResults($limit)
+            ->groupBy('p.id')
             ->getQuery()
             ->getResult();
     }
 
-
+    /**
+     * @param int $limit
+     * @return array<int, array<string, mixed>> Returns an array of top-rated products, each containing:
+     */
     public function findTopRatedProducts(int $limit): array
     {
         return $this->createQueryBuilder('p')
@@ -43,29 +49,15 @@ class ProductRepository extends ServiceEntityRepository
             ->getArrayResult();
     }
 
-
-    //    /**
-    //     * @return Product[] Returns an array of Product objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('p')
-    //            ->andWhere('p.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('p.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
-
-    //    public function findOneBySomeField($value): ?Product
-    //    {
-    //        return $this->createQueryBuilder('p')
-    //            ->andWhere('p.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+    /**
+     * @return array<Product>
+     */
+    public function findAllOptimized(): array
+    {
+        return $this->createQueryBuilder('p')
+            ->select('p', 'c')
+            ->leftJoin('p.category', 'c')
+            ->getQuery()
+            ->getResult();
+    }
 }

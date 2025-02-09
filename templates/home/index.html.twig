@@ -22,11 +22,11 @@
                     <div class="bg-white p-4 rounded-lg shadow-md hover:shadow-xl transition duration-300" {{ vue_component('ProductComponent', {
                         'products': product.name,
                         'price': product.price,
-                        'image': product.imageProducts|length > 0 ? product.imageProducts|first.url : '',
+                        'image': product.imageProducts is not null ? asset('img/products/' ~ product.imageProducts) : asset('img/imageNotFound.png'),
                         'wishlist': false,
                         'path': path('app_product_show', { 'id': product.id }),
                         'isHome': true,
-                        'isConnected': app.user ? true : false,
+                        'isConnected': app.user and not is_granted("ROLE_ADMIN") ? true : false,
                         'pathAddWishlist': path('wishlist_add', { 'id': product.id }),
                         'pathAddCart': path('app_order_add_to_cart', { 'id': product.id })
                     }) }}></div>
@@ -54,11 +54,11 @@
                     <div class="bg-white p-4 rounded-lg shadow-md hover:shadow-xl transition duration-300" {{ vue_component('ProductComponent', {
                         'products': topProduct.name,
                         'price': topProduct.price,
-                        'image': topProduct.firstImage,
+                        'image': topProduct.firstImage is not null ? asset('img/products/' ~ topProduct.firstImage) : asset('img/imageNotFound.png'),
                         'wishlist': false,
                         'path': path('app_product_show', { 'id': topProduct.id }),
                         'isHome': true,
-                        'isConnected': app.user ? true : false,
+                        'isConnected': app.user and not is_granted("ROLE_ADMIN") ? true : false,
                         'pathAddWishlist': path('wishlist_add', { 'id': topProduct.id }),
                         'pathAddCart': path('app_order_add_to_cart', { 'id': topProduct.id })
                     }) }}></div>

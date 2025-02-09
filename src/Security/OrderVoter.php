@@ -8,6 +8,9 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\User\UserInterface;
 
+/**
+ * @extends Voter<string, ?Order>
+ */
 class OrderVoter extends Voter
 {
     public const VIEW = 'view';
@@ -27,7 +30,6 @@ class OrderVoter extends Voter
             return false;
         }
 
-        // Permettre l'affichage même si le panier est vide (null)
         if ($attribute === self::VIEW && $subject === null) {
             return true;
         }
@@ -35,12 +37,6 @@ class OrderVoter extends Voter
         /** @var Order $order */
         $order = $subject;
 
-        // Vérifier qu'une commande a bien ete crée
-        if (!$order) {
-            return false;
-        }
-
-        // Vérifier que l'utilisateur est propriétaire de la commande
         if ($order->getClient() !== $user) {
             return false;
         }
