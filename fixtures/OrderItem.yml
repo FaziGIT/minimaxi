@@ -1,7 +1,0 @@
-App\Entity\OrderItem:
-  orderItem_{1..100}:
-    globalPrice: '<numberBetween(10, 200)>'
-    quantity: '<numberBetween(1, 10)>'
-    createdAt: '<dateTimeBetween("-1 year", "now")>'
-    product: '@product_*'
-    linkedOrder: '@order_*'

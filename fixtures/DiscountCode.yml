@@ -1,5 +1,0 @@
-App\Entity\DiscountCode:
-  discount_code_{1..10}:
-    code: '<regexify("[A-Z]{3}-[0-9]{3}-[A-Z]{3}")>'
-    percentage: '<numberBetween(20, 80)>'
-    validUntil: '<dateTimeBetween("now", "+1 month")>'

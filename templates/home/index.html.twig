@@ -1,78 +1,18 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}MiniMaxi{% endblock %}
+{% block title %}Hello HomeController!{% endblock %}
 
 {% block body %}
-    <section class="bg-gray-200 py-12">
-        <div class="container mx-auto px-6 text-center">
-            <h2 class="text-4xl font-bold text-gray-800 mb-4">Trouve les éléments qui te correspondent</h2>
-            <p class="text-gray-600 mb-6">En petit et en GRAND !</p>
-        </div>
-    </section>
+<style>
+    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+</style>
 
-    {% include 'message/message_flash.html.twig' %}
+<div class="example-wrapper">
 
-    <!-- New Arrivals -->
-    <section class="py-12">
-        <div class="container mx-auto px-6">
-            <h2 class="text-2xl font-bold text-gray-800 mb-6">Nouveautés</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-
-                {% for product in products %}
-                    <div class="bg-white p-4 rounded-lg shadow-md hover:shadow-xl transition duration-300" {{ vue_component('ProductComponent', {
-                        'products': product.name,
-                        'price': product.price,
-                        'image': product.imageProducts is not null ? asset('img/products/' ~ product.imageProducts) : asset('img/imageNotFound.png'),
-                        'wishlist': false,
-                        'path': path('app_product_show', { 'id': product.id }),
-                        'isHome': true,
-                        'isConnected': app.user and not is_granted("ROLE_ADMIN") ? true : false,
-                        'pathAddWishlist': path('wishlist_add', { 'id': product.id }),
-                        'pathAddCart': path('app_order_add_to_cart', { 'id': product.id })
-                    }) }}></div>
-
-                {% else %}
-                    <p class="text-center text-gray-500">Pas de produits trouvés</p>
-                {% endfor %}
-            </div>
-
-            <a href="{{ path('app_product_index') }}"
-               class="inline-block mt-4 px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-700">
-                Tout voir
-            </a>
-
-        </div>
-    </section>
-
-    <!-- Top rated -->
-    <section class="py-12">
-        <div class="container mx-auto px-6">
-            <h2 class="text-2xl font-bold text-gray-800 mb-6">Meilleures ventes</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-
-                {% for topProduct in topProducts %}
-                    <div class="bg-white p-4 rounded-lg shadow-md hover:shadow-xl transition duration-300" {{ vue_component('ProductComponent', {
-                        'products': topProduct.name,
-                        'price': topProduct.price,
-                        'image': topProduct.firstImage is not null ? asset('img/products/' ~ topProduct.firstImage) : asset('img/imageNotFound.png'),
-                        'wishlist': false,
-                        'path': path('app_product_show', { 'id': topProduct.id }),
-                        'isHome': true,
-                        'isConnected': app.user and not is_granted("ROLE_ADMIN") ? true : false,
-                        'pathAddWishlist': path('wishlist_add', { 'id': topProduct.id }),
-                        'pathAddCart': path('app_order_add_to_cart', { 'id': topProduct.id })
-                    }) }}></div>
-                {% else %}
-                    <p class="text-center text-gray-500">Pas de produits trouvés</p>
-                {% endfor %}
-            </div>
-
-            <a href="{{ path('app_product_index') }}"
-               class="inline-block mt-4 px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-700">
-                Tout voir
-            </a>
-
-        </div>
-    </section>
-
+    <p class="text-blue-500">Here an import from Hello.vue and tailwindcss</p>
+    <div {{ vue_component('Hello', {name: "MiniMaxi"}) }}>
+        Loading...
+    </div>
+</div>
 {% endblock %}

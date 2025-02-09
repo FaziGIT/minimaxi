@@ -1,4 +1,0 @@
-App\Entity\ImageProduct:
-  imageProduct_{1..100}:
-    url: '<imageUrl()>'
-    product: '@product_*'
