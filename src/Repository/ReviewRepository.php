@@ -31,7 +31,11 @@ class ReviewRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function getReviewsFromProduct(Product $product)
+    /**
+     * @param Product $product
+     * @return array<Review>
+     */
+    public function getReviewsFromProduct(Product $product): array
     {
         return $this->createQueryBuilder('r')
             ->select('r', 'l')

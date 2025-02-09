@@ -16,6 +16,9 @@ class DiscountCodeRepository extends ServiceEntityRepository
         parent::__construct($registry, DiscountCode::class);
     }
 
+    /**
+     * @return array<DiscountCode>
+     */
     public function findLatestDiscountCode(): array
     {
         return $this->createQueryBuilder('d')
@@ -27,7 +30,10 @@ class DiscountCodeRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function findAllOptimized()
+    /**
+     * @return array<DiscountCode>
+     */
+    public function findAllOptimized(): array
     {
         return $this->createQueryBuilder('d')
             ->select('d', 'o')

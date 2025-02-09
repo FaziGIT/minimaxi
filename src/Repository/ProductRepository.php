@@ -32,6 +32,10 @@ class ProductRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    /**
+     * @param int $limit
+     * @return array<int, array<string, mixed>> Returns an array of top-rated products, each containing:
+     */
     public function findTopRatedProducts(int $limit): array
     {
         return $this->createQueryBuilder('p')
@@ -45,6 +49,9 @@ class ProductRepository extends ServiceEntityRepository
             ->getArrayResult();
     }
 
+    /**
+     * @return array<Product>
+     */
     public function findAllOptimized(): array
     {
         return $this->createQueryBuilder('p')

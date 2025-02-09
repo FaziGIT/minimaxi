@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\Entity\ImageProduct;
 use App\Entity\Product;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
@@ -14,6 +15,9 @@ class createImgFromProductForm
     {
     }
 
+    /**
+     * @param ArrayCollection<int, ImageProduct>|null $originalImages
+     */
     public function createImage(Product $product, FormInterface $form, EntityManagerInterface $entityManager, ?ArrayCollection $originalImages = null): void
     {
         // Récupérer la collection d'images du formulaire

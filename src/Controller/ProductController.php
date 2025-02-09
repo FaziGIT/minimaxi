@@ -29,8 +29,8 @@ final class ProductController extends AbstractController
                 'description' => $product->getDescription(),
                 'price' => $product->getPrice(),
                 'stockQuantity' => $product->getStockQuantity(),
-                'createdAt' => $product->getCreatedAt()?->format('Y-m-d H:i:s'),
-                'category' => $product->getCategory()?->getName(),
+                'createdAt' => $product->getCreatedAt()->format('Y-m-d H:i:s'),
+                'category' => $product->getCategory()->getName(),
                 'size' => $product->getSize()?->value
             ];
         }, $products);

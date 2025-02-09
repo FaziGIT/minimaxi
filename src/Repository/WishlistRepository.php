@@ -19,6 +19,12 @@ class WishlistRepository extends ServiceEntityRepository
         parent::__construct($registry, Wishlist::class);
     }
 
+    /**
+     * @param Client $client
+     * @param int $limit
+     * @param int $offset
+     * @return array<int, array<int, Wishlist>|int>
+     */
     public function findPaginatedByClient(Client $client, int $limit, int $offset): array
     {
         $qb = $this->createQueryBuilder('w')

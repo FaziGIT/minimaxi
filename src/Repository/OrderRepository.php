@@ -20,6 +20,10 @@ class OrderRepository extends ServiceEntityRepository
         parent::__construct($registry, Order::class);
     }
 
+    /**
+     * @param Client $user
+     * @return array<Order>
+     */
     public function findAllByUser(Client $user): array
     {
         return $this->createQueryBuilder('o')
@@ -33,6 +37,13 @@ class OrderRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    /**
+     * @param Client $user
+     * @param array<string>|string $statuses
+     * @param int $page
+     * @param int $limit
+     * @return array<int, array<int, Order>|int>
+     */
     public function findPaginatedOrders(Client $user, array|string $statuses, int $page, int $limit): array
     {
         $qb = $this->createQueryBuilder('o')

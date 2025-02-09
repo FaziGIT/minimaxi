@@ -8,7 +8,7 @@ use Symfony\Component\Validator\ConstraintViolation;
 
 class ClientTest extends KernelTestCase
 {
-    private $validator;
+    private mixed $validator;
 
     protected function setUp(): void
     {
@@ -40,17 +40,17 @@ class ClientTest extends KernelTestCase
         $this->assertCount($number, $errors, implode(', ', $messages));
     }
 
-    public function testValidEntity()
+    public function testValidEntity(): void
     {
         $this->assertHasErrors($this->getEntity());
     }
 
-    public function testInvalidEntityEmail()
+    public function testInvalidEntityEmail(): void
     {
         $this->assertHasErrors($this->getEntity()->setEmail(''), 1);
     }
 
-    public function testValidEntityWithNullPhoneNumber()
+    public function testValidEntityWithNullPhoneNumber(): void
     {
         $this->assertHasErrors($this->getEntity()->setPhoneNumber(''));
     }
