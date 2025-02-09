@@ -24,19 +24,3 @@
 npm-debug.log
 yarn-error.log
 ###< symfony/webpack-encore-bundle ###
-
-###> phpstorm ###
-/.idea/
-### phpstorm ###
-
-/public/img/avatar
-/public/img/products
-
-###> phpstan/phpstan ###
-phpstan.neon
-###< phpstan/phpstan ###
-
-###> squizlabs/php_codesniffer ###
-/.phpcs-cache
-/phpcs.xml
-###< squizlabs/php_codesniffer ###

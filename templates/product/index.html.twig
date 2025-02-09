@@ -1,7 +1,0 @@
-{% extends 'base.html.twig' %}
-
-{% block title %}Product index{% endblock %}
-
-{% block body %}
-    <div {{ vue_component('Products', { 'products': products, 'productPath': path('app_product_show', { 'id': 'ID_PLACEHOLDER' }), 'isConnected': app.user ? true : false, 'pathAddWishlist': path('wishlist_add', {'id': 'ID_PLACEHOLDER'}), 'pathAddCart': path('app_order_add_to_cart', {'id': 'ID_PLACEHOLDER'})  })}}></div>
-{% endblock %}

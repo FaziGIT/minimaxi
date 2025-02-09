@@ -1,0 +1,60 @@
+services:
+
+  php:
+    container_name: minimaxi-php
+    build:
+      context: ./.docker/php
+    volumes:
+      - ./:/var/www/minimaxi:cached
+    networks:
+      - minimaxi
+    restart: always
+
+  nginx:
+    build:
+      context: ./.docker/nginx
+    volumes:
+      - ./public:/var/www/minimaxi/public:cached
+    ports:
+      - "8000:80"
+    networks:
+      - minimaxi
+    restart: always
+
+  node:
+    container_name: minimaxi-node
+    image: node:23-alpine
+    volumes:
+      - ./:/var/www/minimaxi:cached
+    networks:
+      - minimaxi
+    working_dir: /var/www/minimaxi
+    command: sh -c "tail -f /dev/null"
+    stop_grace_period: 0s
+    restart: always
+
+
+  postgres:
+    image: postgres:17.0-alpine3.19
+    shm_size: 128mb
+    volumes:
+      - "db_minimaxi:/var/lib/postgresql/data"
+    networks:
+      - minimaxi
+    environment:
+      - POSTGRES_USER=minimaxi
+      - POSTGRES_PASSWORD=password
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - "8080:8080"
+    networks:
+      - minimaxi
+
+volumes:
+  db_minimaxi:
+
+networks:
+  minimaxi:
