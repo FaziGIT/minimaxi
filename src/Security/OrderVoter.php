@@ -34,10 +34,6 @@ class OrderVoter extends Voter
         /** @var Order $order */
         $order = $subject;
 
-        if (!$order) {
-            return false;
-        }
-
         if ($order->getClient() !== $user) {
             return false;
         }

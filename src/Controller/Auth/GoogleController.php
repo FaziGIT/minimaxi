@@ -11,18 +11,21 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 class GoogleController extends AbstractController
 {
     #[Route(path: '/connect/google', name: 'connect_google')]
-    public function connectAction(ClientRegistry $clientRegistry)
+    public function connectAction(ClientRegistry $clientRegistry): RedirectResponse
     {
-        return $clientRegistry->getClient('google')->redirect();
+        return $clientRegistry
+            ->getClient('google')
+            ->redirect(['profile'], []);
     }
 
     #[Route(path: '/connect/google/check', name: 'connect_google_check')]
-    public function connectCheckAction(Request $request): JsonResponse|RedirectResponse
+    public function connectCheckAction(): JsonResponse|RedirectResponse
     {
         if (!$this->getUser()) {
             return new JsonResponse(array('status' => false, 'message' => "Utilisateur introuvable"));
@@ -32,7 +35,7 @@ class GoogleController extends AbstractController
     }
 
     #[Route(path: '/add-address', name: 'add_address')]
-    public function addAddress(Request $request, EntityManagerInterface $entityManager)
+    public function addAddress(Request $request, EntityManagerInterface $entityManager): Response
     {
         /** @var Client $user */
         $user = $this->getUser();

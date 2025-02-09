@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Client;
 use App\Entity\Product;
 use App\Entity\Review;
 use App\Form\ReviewType;
@@ -48,6 +49,11 @@ final class ProductController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+
+            if (!$this->getUser() instanceof Client) {
+                throw $this->createAccessDeniedException('Vous devez être connecté en tant que client pour commenter.');
+            }
+
             if ($review->getRating() > 5) {
                 $review->setRating(5);
             }

@@ -60,6 +60,20 @@ final class DiscountCodeController extends AbstractController
                 $discountCode->setPercentage(100);
             }
 
+            // update the global price
+            foreach ($discountCode->getOrders() as $order) {
+                $totalPrice = 0;
+                foreach ($order->getOrderItems() as $item) {
+                    $item->setGlobalPrice($item->getProduct()->getPrice() * $item->getQuantity());
+                    $totalPrice += $item->getGlobalPrice();
+                }
+
+                // add the discount
+                $discount = $totalPrice * $discountCode->getPercentage() / 100;
+                $order->setTotalPrice($totalPrice - $discount);
+            }
+
+
             $entityManager->flush();
 
             return $this->redirectToRoute('app_discount_code_index', [], Response::HTTP_SEE_OTHER);

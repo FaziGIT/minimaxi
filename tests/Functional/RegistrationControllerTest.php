@@ -3,8 +3,6 @@
 namespace App\Tests\Functional;
 
 use App\Repository\UserRepository;
-use Doctrine\ORM\EntityManager;
-use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
@@ -16,20 +14,20 @@ class RegistrationControllerTest extends WebTestCase
     protected function setUp(): void
     {
         $this->client = static::createClient();
-
         $container = static::getContainer();
 
-        /** @var EntityManager $em */
+        // On utilise le service UserRepositoryTest du conteneur
         $this->userRepository = $container->get(UserRepository::class);
     }
 
     public function testRegister(): void
     {
-        // Register a new user
+        // Envoie une requête GET à la page d'inscription
         $this->client->request('GET', '/register');
         self::assertResponseIsSuccessful();
         self::assertPageTitleContains("S'inscrire");
 
+        // Soumet le formulaire d'inscription
         $this->client->submitForm('S\'inscrire', [
             'registration_form[email]' => 'me@example.com',
             'registration_form[plainPassword]' => 'password1!',
@@ -37,12 +35,12 @@ class RegistrationControllerTest extends WebTestCase
             'registration_form[agreeTerms]' => true,
         ]);
 
+        // Vérifie la redirection après l'inscription
         self::assertResponseRedirects('/');
 
-        $user = $this->userRepository->findOneByEmail('me@example.com');
-
+        // Vérifie que l'utilisateur a bien été enregistré
+        $user = $this->userRepository->findOneBy(['email' => 'me@example.com']);
         self::assertNotNull($user, 'L\'utilisateur avec l\'email me@example.com n\'a pas été trouvé');
-
         self::assertFalse($user->isVerified());
     }
 }

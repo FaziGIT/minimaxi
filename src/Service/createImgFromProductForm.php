@@ -34,7 +34,7 @@ class createImgFromProductForm
 
         // Traiter les images existantes et nouvelles
         foreach ($product->getImageProducts() as $index => $imageProduct) {
-            $imageField = $imageProducts->get($index);
+            $imageField = $imageProducts->get(strval($index));
 
             // Si le champ image n'existe pas ou ne contient pas de données
             if (!$imageField->has('image') || $imageField->get('image')->getData() === null) {

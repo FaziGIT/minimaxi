@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Client;
 use App\Entity\Like;
 use App\Entity\Review;
 use Doctrine\ORM\EntityManagerInterface;
@@ -15,6 +16,10 @@ final class LikeController extends AbstractController
     #[Route('/add/{id}', name: 'app_like_index', methods: ['POST'])]
     public function handleLike(Review $review, EntityManagerInterface $entityManager): Response
     {
+        if (!$this->getUser() instanceof Client) {
+            throw $this->createAccessDeniedException('Vous devez être connecté.');
+        }
+
         $like = new Like();
 
         $like->setReview($review);

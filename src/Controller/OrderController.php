@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Client;
 use App\Entity\Order;
 use App\Entity\OrderItem;
 use App\Entity\Product;
@@ -9,7 +10,6 @@ use App\Enum\OrderStatusEnum;
 use App\Repository\DiscountCodeRepository;
 use App\Repository\OrderRepository;
 use DateTimeImmutable;
-use Doctrine\DBAL\Exception\DatabaseDoesNotExist;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,6 +21,10 @@ final class OrderController extends AbstractController
     #[Route('/cart/add/{id}', name: 'app_order_add_to_cart', methods: ['GET'])]
     public function addToCart(Product $product, EntityManagerInterface $entityManager, OrderRepository $orderRepository, Request $request): Response
     {
+        if (!$this->getUser() instanceof Client) {
+            throw $this->createAccessDeniedException('Vous devez être connecté.');
+        }
+
         $cart = $orderRepository->findPendingOrderById($this->getUser());
 
         if (!$cart) {

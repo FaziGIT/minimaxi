@@ -24,7 +24,7 @@ class UserProfileController extends AbstractController
             throw $this->createAccessDeniedException('Vous devez être connecté.');
         }
 
-        $discountCodes = $discountCodeRepository->findLatestDiscountCode(3);
+        $discountCodes = $discountCodeRepository->findLatestDiscountCode();
 
         $currentStatuses = [
             OrderStatusEnum::PAID->value,
