@@ -19,9 +19,21 @@
 
 ### Tips for any problem :
 - ```make symfony d:d:c``` (to create the database)
+- ```make -- symfony d:s:u --force ``` (push the schema of the database)
 - Add an .htaccess file in public/ folder if you have a 404 error https://gist.github.com/alch/7766993 (nginx)
 - Something else ? Dm me !
 
+---
+Comptes de tests :
+
+- Client:
+  - mail : client@client.fr
+  - password : client
+ 
+- Admin:
+  - mail : admin@admin.fr
+  - password : admin
+ 
 ---
 
 - If you want to add some task, don't hesitate !
