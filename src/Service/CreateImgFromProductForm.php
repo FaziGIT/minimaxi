@@ -9,7 +9,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Form\FormInterface;
 
-class createImgFromProductForm
+class CreateImgFromProductForm
 {
     public function __construct(private ParameterBagInterface $params)
     {

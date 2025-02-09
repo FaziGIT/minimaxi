@@ -39,3 +39,4 @@ jobs:
 
       - name: TwigCS
         run: vendor/bin/twigcs templates
+#        run: vendor/bin/twigcs --fix templates

@@ -15,5 +15,4 @@ class LikeRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Like::class);
     }
-
 }

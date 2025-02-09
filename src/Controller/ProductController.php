@@ -49,7 +49,6 @@ final class ProductController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
             if (!$this->getUser() instanceof Client) {
                 throw $this->createAccessDeniedException('Vous devez être connecté en tant que client pour commenter.');
             }

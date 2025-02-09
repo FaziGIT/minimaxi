@@ -14,7 +14,6 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/review')]
 final class ReviewController extends AbstractController
 {
-
     #[Route('/{id}', name: 'app_review_delete', methods: ['POST'])]
     public function delete(Request $request, Review $review, EntityManagerInterface $entityManager): Response
     {
