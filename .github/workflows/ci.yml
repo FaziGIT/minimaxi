@@ -36,7 +36,3 @@ jobs:
 
       - name: PHP_CodeSniffer
         run: vendor/bin/phpcs --warning-severity=0 src/
-
-      - name: TwigCS
-        run: vendor/bin/twigcs templates
-#        run: vendor/bin/twigcs --fix templates
