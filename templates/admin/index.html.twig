@@ -12,8 +12,16 @@
             <div class="flex items-center space-x-4">
                 <div class="w-24 h-24">
                     {% if app.user.avatar %}
-                        <img src="{{ asset(app.user.avatar) }}" alt="Avatar de {{ app.user.email }}"
-                             class="w-full h-full object-cover rounded-full">
+                        {% if app.user.avatar starts with 'https' %}
+                            <img src="{{ app.user.avatar }}" alt="Avatar de {{ app.user.email }}"
+                                 class="w-full h-full object-cover rounded-full">
+                        {% elseif app.user.avatar is not null %}
+                            <img src="{{ asset('img/avatar/' ~ app.user.avatar) }}" alt="Avatar de {{ app.user.email }}"
+                                 class="w-full h-full object-cover rounded-full">
+                        {% else %}
+                            <img src="{{ asset('img/imageNotFound.png') }}" alt="Avatar de {{ app.user.email }}"
+                                 class="w-full h-full object-cover rounded-full">
+                        {% endif %}
                     {% endif %}
                 </div>
                 <div>
